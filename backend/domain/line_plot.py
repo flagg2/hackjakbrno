@@ -34,6 +34,7 @@ def line_plot_glycemia(
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["CGM Glucose Value (mmol/l)"]]
     df.index = pd.to_datetime(df.index)
+    df = df.loc[from_datetime:to_datetime]
 
     df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
     df_agg = df.groupby("minute_of_day")["CGM Glucose Value (mmol/l)"].agg(
