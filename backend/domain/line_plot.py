@@ -1,11 +1,12 @@
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import TypedDict
 
 import pandas as pd
 
 
-class Measurements(TypedDict):
+@dataclass
+class Measurements():
     median: float
     mean: float
     min: float
@@ -16,7 +17,8 @@ class Measurements(TypedDict):
     q90: float
 
 
-class Data(TypedDict):
+@dataclass
+class Data:
     time: int
     measurements: Measurements
 

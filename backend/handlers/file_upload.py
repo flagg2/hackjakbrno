@@ -17,7 +17,6 @@ router = APIRouter()
     "/upload-zip",
     responses={
         status.HTTP_200_OK: {"model": UploadZipResponseBody},
-        status.HTTP_400_BAD_REQUEST: {"model": ErrorResponseBody},
     },
 )
 async def upload_zip(
