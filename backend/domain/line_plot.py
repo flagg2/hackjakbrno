@@ -34,6 +34,7 @@ def line_plot_glycemia(
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["CGM Glucose Value (mmol/l)"]]
     df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
     df = df.loc[from_datetime:to_datetime]
 
     df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
@@ -66,12 +67,12 @@ def line_plot_glycemia(
     ]
 
 def line_plot_bolus(
-    file: str, from_datetime: datetime, to_datetime: datetime, step: int, doze: Doze 
+    file: str, from_datetime: datetime, to_datetime: datetime, step: int, doze: Doze
 ) -> list[Data]:
-    pass
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["Carbs Input (g)", "Insulin Delivered (U)"]]
     df.index = pd.to_datetime(df.index)
+    df = df.sort_index()
     df = df.loc[from_datetime:to_datetime]
 
     if doze == Doze.AUTO:
@@ -118,7 +119,7 @@ def line_plot_basal(
     df = df[~df.index.duplicated(keep='first')]
     df = df.resample("min").ffill()
     df = df.loc[from_datetime:to_datetime]
-    
+
     df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
     df_agg = df.groupby("minute_of_day")["Rate"].agg(
         median="median",
@@ -148,4 +149,3 @@ def line_plot_basal(
         )
         for time, row in df_agg.iterrows()
     ]
-
