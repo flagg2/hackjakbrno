@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -13,8 +12,11 @@ import {
 import { GrDocumentZip } from "react-icons/gr";
 import Link from "next/link";
 
-export default function DocumentInfo() {
-  const { fileId } = useParams<{ fileId?: string }>();
+type DocumentInfoProps = {
+  fileId?: string;
+};
+
+export default function DocumentInfo({ fileId }: DocumentInfoProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

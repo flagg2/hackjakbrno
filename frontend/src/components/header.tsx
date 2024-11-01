@@ -2,10 +2,14 @@ import Link from "next/link";
 import { GiHealthNormal } from "react-icons/gi";
 import DocumentInfo from "./document-info";
 
-export default function Header() {
+type HeaderProps = {
+  fileId?: string;
+};
+
+export default function Header({ fileId }: HeaderProps) {
   return (
     <header className="bg-accent border-b">
-      <div className="container">
+      <div className="container mx-auto">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
@@ -25,7 +29,7 @@ export default function Header() {
               </Link>
             </div>
           </div> */}
-          <DocumentInfo />
+          <DocumentInfo fileId={fileId} />
         </div>
       </div>
     </header>

@@ -15,13 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-
-const colors = {
-  median: "#0060AC",
-  p2575: "#B5D1FF",
-  p1090: "#DFE9FF",
-  minmax: "#0060AC",
-};
+import { InputLabel } from "./input-label";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { chartColors } from "@/const/colors";
+import { ChartTooltip } from "./chart-tooltip";
 
 const data = [
   {
@@ -146,27 +143,104 @@ const data = [
   },
 ];
 
+type SelectOption<T extends string> = {
+  value: T;
+  label: string;
+};
+
+interface OptionSelectProps<T extends string> {
+  options: SelectOption<T>[];
+  defaultValue: T;
+  onValueChange: (value: T) => void;
+}
+
+const OptionSelect = <T extends string>({
+  options,
+  defaultValue,
+  onValueChange,
+}: OptionSelectProps<T>) => (
+  <Select defaultValue={defaultValue} onValueChange={onValueChange}>
+    <SelectTrigger className="w-[180px] mt-1">
+      <SelectValue
+        placeholder={options.find((opt) => opt.value === defaultValue)?.label}
+      />
+    </SelectTrigger>
+    <SelectContent>
+      {options.map((option) => (
+        <SelectItem key={option.value} value={option.value}>
+          {option.label}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+);
+
 export const DemoChart = () => {
-  const [timePeriod, setTimePeriod] = useState("last7");
+  const [timePeriod, setTimePeriod] = useQueryState(
+    "timePeriod",
+    parseAsStringEnum(["last7", "last30", "last90"]).withDefault("last7")
+  );
+
+  const [dataInterval, setDataInterval] = useQueryState(
+    "dataInterval",
+    parseAsStringEnum(["15", "30", "60"]).withDefault("15")
+  );
+
+  const [bolusType, setBolusType] = useQueryState(
+    "bolusType",
+    parseAsStringEnum([
+      "self-administered",
+      "auto-administered",
+      "all",
+    ]).withDefault("self-administered")
+  );
+
+  const timeRangeOptions: SelectOption<"last7" | "last30" | "last90">[] = [
+    { value: "last7", label: "Last 7 days" },
+    { value: "last30", label: "Last 30 days" },
+    { value: "last90", label: "Last 90 days" },
+  ];
+
+  const intervalOptions: SelectOption<"15" | "30" | "60">[] = [
+    { value: "15", label: "15 minutes" },
+    { value: "30", label: "30 minutes" },
+    { value: "60", label: "1 hour" },
+  ];
+
+  const bolusTypeOptions: SelectOption<
+    "self-administered" | "auto-administered" | "all"
+  >[] = [
+    { value: "self-administered", label: "Self-administered" },
+    { value: "auto-administered", label: "Auto-administered" },
+    { value: "all", label: "All" },
+  ];
+
   return (
     <div className="">
-      <div className="ml-16">
-        <h2 className="text-2xl font-bold mb-2">Glucose Chart</h2>
-        <div className="flex items-center gap-2  mb-4">
-          <label className="text-sm font-bold">Time period</label>
-          <Select
-            defaultValue="last7"
-            onValueChange={(value) => setTimePeriod(value)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="last 7 days" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="last7">Last 7 days</SelectItem>
-              <SelectItem value="last30">Last 30 days</SelectItem>
-              <SelectItem value="last90">Last 90 days</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="">
+        <h2 className="text-2xl font-bold mb-4">Glucose Chart</h2>
+        <div className="flex items-center gap-4  mb-4">
+          <InputLabel label="Time period">
+            <OptionSelect<"last7" | "last30" | "last90">
+              options={timeRangeOptions}
+              defaultValue="last7"
+              onValueChange={setTimePeriod}
+            />
+          </InputLabel>
+          <InputLabel label="Data interval">
+            <OptionSelect<"15" | "30" | "60">
+              options={intervalOptions}
+              defaultValue="15"
+              onValueChange={setDataInterval}
+            />
+          </InputLabel>
+          <InputLabel label="Bolus type">
+            <OptionSelect<"self-administered" | "auto-administered" | "all">
+              options={bolusTypeOptions}
+              defaultValue="self-administered"
+              onValueChange={setBolusType}
+            />
+          </InputLabel>
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
@@ -191,14 +265,14 @@ export const DemoChart = () => {
                 position: "insideLeft",
               }}
             />
-            <Tooltip />
+            <Tooltip content={<ChartTooltip />} />
 
             {/* P10-P90 Area (Bottom Layer) */}
             <Area
               type="monotone"
               dataKey="p1090"
               stroke="none"
-              fill={colors.p1090}
+              fill={chartColors.p1090}
               fillOpacity={0.5}
               activeDot={false}
               baseLine={0}
@@ -209,7 +283,7 @@ export const DemoChart = () => {
               type="monotone"
               dataKey="p2575"
               stroke="none"
-              fill={colors.p2575}
+              fill={chartColors.p2575}
               fillOpacity={0.7}
               activeDot={false}
             />
@@ -218,7 +292,7 @@ export const DemoChart = () => {
             <Line
               type="monotone"
               dataKey="min"
-              stroke={colors.minmax}
+              stroke={chartColors.minmax}
               strokeDasharray="3 3"
               strokeWidth={1}
               dot={false}
@@ -226,7 +300,7 @@ export const DemoChart = () => {
             <Line
               type="monotone"
               dataKey="max"
-              stroke={colors.minmax}
+              stroke={chartColors.minmax}
               strokeDasharray="3 3"
               strokeWidth={1}
               dot={false}
@@ -236,7 +310,7 @@ export const DemoChart = () => {
             <Line
               type="monotone"
               dataKey="median"
-              stroke={colors.median}
+              stroke={chartColors.median}
               strokeWidth={2}
               dot={false}
             />

@@ -1,15 +1,22 @@
 "use server";
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { redirect } from "next/navigation";
 
 export async function uploadFileAction({ formData }: { formData: FormData }) {
-  //   if (!(file instanceof File)) {
-  //     throw new Error("Invalid file");
-  //   }
+  try {
+    const response = await fetch("http://localhost:8000/upload-zip", {
+      method: "POST",
+      body: formData,
+    });
 
-  // upload to server
-  await sleep(1000);
-  console.log("uploading", formData);
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`);
+    }
+
+    const result = (await response.json()) as { file_id: string };
+    redirect(`/data/${result.file_id}`);
+  } catch (error) {
+    console.error("Upload error:", error);
+    throw error;
+  }
 }
