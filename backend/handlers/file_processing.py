@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi import status
 
 from backend.domain.line_plot import line_plot_glycemia, Dose, line_plot_bolus, line_plot_basal
+from backend.domain.utils import extreme_timestamps
 from backend.schema.file_processing import GlycemiaResponseBody, BasalInsulinResponseBody, BolusInsulinResponseBody
 
 router = APIRouter()
@@ -27,13 +28,15 @@ async def get_glycemia(
         with os.scandir(f"/tmp/{file_id}") as entries:
             dirnames = [entry.name for entry in entries if (entry.is_dir() and (entry.name != "." and entry.name != ".." and entry.name != "__MACOSX"))]
             assert len(dirnames) == 1, dirnames
+            file = f"/tmp/{file_id}/{dirnames[0]}/cgm_data_1.csv",
             data=line_plot_glycemia(
-                file=f"/tmp/{file_id}/{dirnames[0]}/cgm_data_1.csv",
+                file=file,
                 from_datetime=from_datetime,
                 to_datetime=to_datetime,
                 step_in_minutes=step_in_minutes,
             )
-            return GlycemiaResponseBody.from_data(data)
+            timestamps = extreme_timestamps(file)
+            return GlycemiaResponseBody.from_data_and_timestamps(data, *timestamps)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
@@ -55,13 +58,15 @@ async def get_basal_insulin(
         with os.scandir(f"/tmp/{file_id}") as entries:
             dirnames = [entry.name for entry in entries if (entry.is_dir() and (entry.name != "." and entry.name != ".." and entry.name != "__MACOSX"))]
             assert len(dirnames) == 1, dirnames
+            file = f"/tmp/{file_id}/{dirnames[0]}/Insulin data/basal_data_1.csv"
+            timestamps = extreme_timestamps(file)
             data=line_plot_basal(
-                file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/basal_data_1.csv",
+                file=file,
                 from_datetime=from_datetime,
                 to_datetime=to_datetime,
                 step_in_minutes=step_in_minutes,
             )
-            return BasalInsulinResponseBody.from_data(data)
+            return BasalInsulinResponseBody.from_data_and_timestamps(data, *timestamps)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
@@ -85,14 +90,16 @@ async def get_bolus_insulin(
         with os.scandir(f"/tmp/{file_id}") as entries:
             dirnames = [entry.name for entry in entries if (entry.is_dir() and (entry.name != "." and entry.name != ".." and entry.name != "__MACOSX"))]
             assert len(dirnames) == 1, dirnames
+            file = f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv"
             data=line_plot_bolus(
-                file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv",
+                file=file,
                 from_datetime=from_datetime,
                 to_datetime=to_datetime,
                 step_in_minutes=step_in_minutes,
                 dose=dose,
             )
-            return GlycemiaResponseBody.from_data(data)
+            timestamps = extreme_timestamps(file)
+            return GlycemiaResponseBody.from_data_and_timestamps(data, *timestamps)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Error")

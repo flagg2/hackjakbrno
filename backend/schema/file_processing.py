@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -31,23 +32,41 @@ class DataResponseBody(BaseModel):
 
 class GlycemiaResponseBody(BaseModel):
     data: list[DataResponseBody]
+    min_timestamp: datetime
+    max_timestamp: datetime
 
     @classmethod
-    def from_data(cls, data: list[LinePlotData]):
-        return cls(data=[DataResponseBody.from_data(d) for d in data])
+    def from_data_and_timestamps(cls, data: list[LinePlotData], min_timestamp: datetime, max_timestamp: datetime) -> "GlycemiaResponseBody":
+        return cls(
+            data=[DataResponseBody.from_data(d) for d in data],
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+        )
 
 
 class BasalInsulinResponseBody(BaseModel):
     data: list[DataResponseBody]
+    min_timestamp: datetime
+    max_timestamp: datetime
 
     @classmethod
-    def from_data(cls, data: list[LinePlotData]):
-        return cls(data=[DataResponseBody.from_data(d) for d in data])
+    def from_data_and_timestamps(cls, data: list[LinePlotData], min_timestamp: datetime, max_timestamp: datetime) -> "BasalInsulinResponseBody":
+        return cls(
+            data=[DataResponseBody.from_data(d) for d in data],
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+        )
 
 
 class BolusInsulinResponseBody(BaseModel):
     data: list[DataResponseBody]
+    min_timestamp: datetime
+    max_timestamp: datetime
 
     @classmethod
-    def from_data(cls, data: list[LinePlotData]):
-        return cls(data=[DataResponseBody.from_data(d) for d in data])
+    def from_data_and_timestamps(cls, data: list[LinePlotData], min_timestamp: datetime, max_timestamp: datetime) -> "BolusInsulinResponseBody":
+        return cls(
+            data=[DataResponseBody.from_data(d) for d in data],
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+        )

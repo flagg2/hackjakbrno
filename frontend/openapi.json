@@ -1,0 +1,389 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "Pump Perfect", "version": "0.1.0" },
+  "paths": {
+    "/upload-zip": {
+      "post": {
+        "summary": "Upload Zip",
+        "operationId": "upload_zip",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": { "$ref": "#/components/schemas/Body_upload_zip" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadZipResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-glycemia": {
+      "get": {
+        "summary": "Get Glycemia",
+        "operationId": "get_glycemia",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "from_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From Datetime"
+            }
+          },
+          {
+            "name": "to_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To Datetime"
+            }
+          },
+          {
+            "name": "step_in_minutes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlycemiaResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-basal-insulin": {
+      "get": {
+        "summary": "Get Basal Insulin",
+        "operationId": "get_basal_insulin",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "from_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From Datetime"
+            }
+          },
+          {
+            "name": "to_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To Datetime"
+            }
+          },
+          {
+            "name": "step_in_minutes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BasalInsulinResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-bolus-insulin": {
+      "get": {
+        "summary": "Get Bolus Insulin",
+        "operationId": "get_bolus_insulin",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "from_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From Datetime"
+            }
+          },
+          {
+            "name": "to_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To Datetime"
+            }
+          },
+          {
+            "name": "step_in_minutes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
+          },
+          {
+            "name": "dose",
+            "in": "query",
+            "required": false,
+            "schema": { "$ref": "#/components/schemas/Dose", "default": "all" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BolusInsulinResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BasalInsulinResponseBody": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/DataResponseBody" },
+            "type": "array",
+            "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
+          }
+        },
+        "type": "object",
+        "required": ["data", "min_timestamp", "max_timestamp"],
+        "title": "BasalInsulinResponseBody"
+      },
+      "Body_upload_zip": {
+        "properties": {
+          "file": { "type": "string", "format": "binary", "title": "File" }
+        },
+        "type": "object",
+        "required": ["file"],
+        "title": "Body_upload_zip"
+      },
+      "BolusInsulinResponseBody": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/DataResponseBody" },
+            "type": "array",
+            "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
+          }
+        },
+        "type": "object",
+        "required": ["data", "min_timestamp", "max_timestamp"],
+        "title": "BolusInsulinResponseBody"
+      },
+      "DataResponseBody": {
+        "properties": {
+          "time": { "type": "integer", "title": "Time" },
+          "measurements": {
+            "$ref": "#/components/schemas/MeasurementsResponseBody"
+          }
+        },
+        "type": "object",
+        "required": ["time", "measurements"],
+        "title": "DataResponseBody"
+      },
+      "Dose": {
+        "type": "string",
+        "enum": ["auto", "self", "all"],
+        "title": "Dose"
+      },
+      "GlycemiaResponseBody": {
+        "properties": {
+          "data": {
+            "items": { "$ref": "#/components/schemas/DataResponseBody" },
+            "type": "array",
+            "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
+          }
+        },
+        "type": "object",
+        "required": ["data", "min_timestamp", "max_timestamp"],
+        "title": "GlycemiaResponseBody"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MeasurementsResponseBody": {
+        "properties": {
+          "median": { "type": "number", "title": "Median" },
+          "mean": { "type": "number", "title": "Mean" },
+          "min": { "type": "number", "title": "Min" },
+          "max": { "type": "number", "title": "Max" },
+          "q10": { "type": "number", "title": "Q10" },
+          "q25": { "type": "number", "title": "Q25" },
+          "q75": { "type": "number", "title": "Q75" },
+          "q90": { "type": "number", "title": "Q90" }
+        },
+        "type": "object",
+        "required": [
+          "median",
+          "mean",
+          "min",
+          "max",
+          "q10",
+          "q25",
+          "q75",
+          "q90"
+        ],
+        "title": "MeasurementsResponseBody"
+      },
+      "UploadZipResponseBody": {
+        "properties": {
+          "file_id": { "type": "string", "format": "uuid", "title": "File Id" }
+        },
+        "type": "object",
+        "required": ["file_id"],
+        "title": "UploadZipResponseBody"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
