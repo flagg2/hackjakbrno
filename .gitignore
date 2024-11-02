@@ -10,3 +10,5 @@ __pycache__/
 
 # Ignore Cursor files (assuming they are dot files .cursor)
 .cursor
+
+.DS_Store

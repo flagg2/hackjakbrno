@@ -23,7 +23,7 @@ class Data:
     measurements: Measurements
 
 
-class Doze(Enum):
+class Dose(Enum):
     AUTO = "AUTO"
     SELF = "SELF"
     ALL = "ALL"
@@ -69,7 +69,7 @@ def line_plot_glycemia(
     ]
 
 def line_plot_bolus(
-    file: str, from_datetime: datetime, to_datetime: datetime, step: int, doze: Doze
+    file: str, from_datetime: datetime, to_datetime: datetime, step: int, dose: Dose
 ) -> list[Data]:
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["Carbs Input (g)", "Insulin Delivered (U)"]]
@@ -77,9 +77,9 @@ def line_plot_bolus(
     df = df.sort_index()
     df = df.loc[from_datetime:to_datetime]
 
-    if doze == Doze.AUTO:
+    if dose == Dose.AUTO:
         df = df[df["Carbs Input (g)"] > 0.0]
-    elif doze == Doze.SELF:
+    elif dose == Dose.SELF:
         df = df[df["Carbs Input (g)"] == 0.0]
 
     df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
