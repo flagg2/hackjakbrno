@@ -14,7 +14,7 @@ export type InsulinDistributionChartParams = z.infer<
 
 export function useInsulinDistributionState() {
   return useQueryState(
-    "insulin-distribution",
+    "insulinDistribution",
     insulinDistributionParsers.insulinDistribution
   );
 }

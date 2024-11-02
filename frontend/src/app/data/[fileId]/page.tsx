@@ -26,8 +26,12 @@ export default async function DataPage({
   const basalParsed = basalInsulinStateCache.parse(searchParams);
   const bolusParsed = bolusInsulinStateCache.parse(searchParams);
   const glycemiaParsed = glycemiaStateCache.parse(searchParams);
+
+  console.log({ searchParams });
   const insulinDistributionParsed =
     insulinDistributionStateCache.parse(searchParams);
+
+  console.log({ insulinDistributionParsed });
 
   const [
     basalResponse,
@@ -44,7 +48,7 @@ export default async function DataPage({
     ),
   ]);
 
-  //   console.log({ response });
+  console.log({ insulinDistributionResponse });
   return (
     <div className="container mx-auto mt-16">
       <BasalInsulinChart response={basalResponse} />
@@ -52,7 +56,7 @@ export default async function DataPage({
       <GlycemiaChart response={glycemiaResponse} />
       <InsulinDistributionChart
         response={{
-          ...insulinDistributionResponse,
+          ...insulinDistributionResponse.data,
           min_timestamp: basalResponse.min_timestamp,
           max_timestamp: basalResponse.max_timestamp,
         }}

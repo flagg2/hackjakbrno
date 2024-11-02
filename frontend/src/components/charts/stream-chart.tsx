@@ -79,6 +79,7 @@ export const StreamChart = ({
             value: yAxisLabel,
             angle: -90,
             position: "insideLeft",
+            dy: 40,
           }}
         />
         <Tooltip

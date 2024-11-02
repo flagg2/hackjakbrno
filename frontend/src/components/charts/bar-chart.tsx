@@ -23,10 +23,9 @@ type InsulinChartProps = {
 export const BarChart = ({ data, interval, yAxisLabel }: InsulinChartProps) => {
   const xAxisLabel = "Time (hours)";
   const augmentedData = [
-    data[0],
     ...data.map((d) => ({
       ...d,
-      time: d.time + interval,
+      time: interval === 120 ? d.time + interval - 60 : d.time + interval,
     })),
   ];
 
@@ -71,6 +70,7 @@ export const BarChart = ({ data, interval, yAxisLabel }: InsulinChartProps) => {
             value: yAxisLabel,
             angle: -90,
             position: "insideLeft",
+            dy: 40,
           }}
         />
         <Tooltip
@@ -80,7 +80,7 @@ export const BarChart = ({ data, interval, yAxisLabel }: InsulinChartProps) => {
             return (
               <ChartTooltip
                 {...props}
-                timeMinutes={time * 60}
+                timeMinutes={time * 60 + (interval === 120 ? 60 : 0)}
                 timeIntervalMinutes={interval}
               />
             );

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { max } from "date-fns";
 
 import { InputLabel } from "../input-label";
 import { DatePicker } from "../ui/datepicker";
@@ -53,7 +54,7 @@ export const BolusInsulinChart = ({ response }: InsulinChartProps) => {
           <InputLabel label="To">
             <DatePicker
               date={state?.to}
-              fromDate={new Date(response.min_timestamp)}
+              fromDate={max([new Date(response.min_timestamp), state.from])}
               toDate={new Date(response.max_timestamp)}
               setDate={(date) => setState({ ...state, to: date ?? new Date() })}
             />

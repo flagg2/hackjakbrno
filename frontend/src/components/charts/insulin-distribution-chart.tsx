@@ -12,6 +12,7 @@ import {
 } from "@/lib/queryParsers/insulin-distribution";
 import { InsulinDistributionResponse } from "@/api/fetch/insulin-distribution";
 import { BarChart } from "./bar-chart";
+import { endOfDay, max } from "date-fns";
 
 type InsulinDistributionChartProps = {
   response: InsulinDistributionResponse & {
@@ -54,9 +55,11 @@ export const InsulinDistributionChart = ({
           <InputLabel label="To">
             <DatePicker
               date={state?.to}
-              fromDate={new Date(response.min_timestamp)}
+              fromDate={max([new Date(response.min_timestamp), state.from])}
               toDate={new Date(response.max_timestamp)}
-              setDate={(date) => setState({ ...state, to: date ?? new Date() })}
+              setDate={(date) =>
+                setState({ ...state, to: date ? endOfDay(date) : new Date() })
+              }
             />
           </InputLabel>
 

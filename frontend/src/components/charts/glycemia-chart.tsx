@@ -12,6 +12,7 @@ import {
   GlycemiaChartParams,
   useGlycemiaState,
 } from "@/lib/queryParsers/glycemia";
+import { endOfDay, max } from "date-fns";
 
 type GlycemiaChartProps = {
   response: GlycemiaResponse;
@@ -45,9 +46,11 @@ export const GlycemiaChart = ({ response }: GlycemiaChartProps) => {
           <InputLabel label="To">
             <DatePicker
               date={state?.to}
-              fromDate={new Date(response.min_timestamp)}
+              fromDate={max([new Date(response.min_timestamp), state.from])}
               toDate={new Date(response.max_timestamp)}
-              setDate={(date) => setState({ ...state, to: date ?? new Date() })}
+              setDate={(date) =>
+                setState({ ...state, to: date ? endOfDay(date) : new Date() })
+              }
             />
           </InputLabel>
 

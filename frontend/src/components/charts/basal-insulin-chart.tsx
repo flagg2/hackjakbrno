@@ -12,6 +12,7 @@ import {
   BasalInsulinChartParams,
   useBasalInsulinState,
 } from "@/lib/queryParsers/basalInsulin";
+import { max, endOfDay } from "date-fns";
 
 type InsulinChartProps = {
   response: BasalInsulinResponse;
@@ -46,16 +47,21 @@ export const BasalInsulinChart = ({ response }: InsulinChartProps) => {
               fromDate={new Date(response.min_timestamp)}
               toDate={new Date(response.max_timestamp)}
               setDate={(date) =>
-                setState({ ...state, from: date ?? new Date(0) })
+                setState({
+                  ...state,
+                  from: date ? endOfDay(date) : new Date(0),
+                })
               }
             />
           </InputLabel>
           <InputLabel label="To">
             <DatePicker
               date={state?.to}
-              fromDate={new Date(response.min_timestamp)}
+              fromDate={max([new Date(response.min_timestamp), state.from])}
               toDate={new Date(response.max_timestamp)}
-              setDate={(date) => setState({ ...state, to: date ?? new Date() })}
+              setDate={(date) =>
+                setState({ ...state, to: date ? endOfDay(date) : new Date() })
+              }
             />
           </InputLabel>
 
