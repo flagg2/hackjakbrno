@@ -34,7 +34,7 @@ async def insert_patient_embedding(
                 file_bolus=file_bolus,
                 file_glycemia=file_glycemia,
             )
-            with engine.connection() as conn:
+            with engine.connect() as conn:
                 with conn.begin():
                     sql = text(
                         """
@@ -43,7 +43,7 @@ async def insert_patient_embedding(
                         """
                     )
                     conn.execute(
-                        sql, {"patient": dirnames[0], "embedding": embedding}
+                        sql, {"patient": dirnames[0], "embedding": str([embedding])}
                     )
 
             return InsertPatientEmbeddingResponseBody(
@@ -51,4 +51,5 @@ async def insert_patient_embedding(
             )
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
