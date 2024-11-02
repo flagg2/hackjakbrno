@@ -5,11 +5,11 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi import status
 
-from backend.domain.bar_chart import dosage_distribution
+from backend.domain.bar_chart import dosage_distribution, highest_bolus_dosage
 from backend.domain.line_plot import line_plot_glycemia, Dose, line_plot_bolus, line_plot_basal
 from backend.domain.utils import extreme_timestamps
 from backend.schema.file_processing import GlycemiaResponseBody, BasalInsulinResponseBody, BolusInsulinResponseBody, \
-    DosageDistributionResponseBody
+    DosageDistributionResponseBody, HighestBolusDosageDistributionResponseBody
 
 router = APIRouter()
 
@@ -40,7 +40,6 @@ async def get_glycemia(
             timestamps = extreme_timestamps(file)
             return GlycemiaResponseBody.from_data_and_timestamps(data, *timestamps)
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
 
 @router.get(
@@ -70,7 +69,6 @@ async def get_basal_insulin(
             )
             return BasalInsulinResponseBody.from_data_and_timestamps(data, *timestamps)
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
 
 
@@ -103,7 +101,6 @@ async def get_bolus_insulin(
             timestamps = extreme_timestamps(file)
             return GlycemiaResponseBody.from_data_and_timestamps(data, *timestamps)
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
 
 
@@ -137,5 +134,36 @@ async def get_dosage_distribution(
             start_bolus, end_bolus = extreme_timestamps(file_bolus)
             return DosageDistributionResponseBody.from_data_and_timestamps(data, min(start_basal, start_bolus), max(end_basal, end_bolus))
     except Exception as e:
-        print(e)
+        raise HTTPException(status_code=500, detail="Internal Error")
+
+
+@router.get(
+    "/get-highest-bolus-dosage",
+    responses = {
+        status.HTTP_200_OK: {"model": HighestBolusDosageDistributionResponseBody},
+    },
+    operation_id="get_highest_bolus_dosage"
+)
+async def get_highest_bolus_dosage(
+    file_id: UUID,
+    from_datetime: datetime,
+    to_datetime: datetime,
+    step_in_minutes: int = 60,
+    quantile: float = 0.8,
+) -> HighestBolusDosageDistributionResponseBody:
+    try:
+        with os.scandir(f"/tmp/{file_id}") as entries:
+            dirnames = [entry.name for entry in entries if (entry.is_dir() and (entry.name != "." and entry.name != ".." and entry.name != "__MACOSX"))]
+            assert len(dirnames) == 1, dirnames
+            file_bolus = f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv"
+            data=highest_bolus_dosage(
+                file=file_bolus,
+                from_datetime=from_datetime,
+                to_datetime=to_datetime,
+                step_in_minutes=step_in_minutes,
+                quantile=quantile,
+            )
+            start_bolus, end_bolus = extreme_timestamps(file_bolus)
+            return HighestBolusDosageDistributionResponseBody.from_data_and_timestamps(data, start_bolus, end_bolus)
+    except Exception as e:
         raise HTTPException(status_code=500, detail="Internal Error")

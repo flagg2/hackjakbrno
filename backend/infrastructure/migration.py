@@ -15,4 +15,5 @@ def init_tables():
 
 if __name__ == "__main__":
     init_tables()
+    print("MIGRATION DONE")
     # pass

@@ -4,7 +4,9 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from backend.domain.line_plot import Data as LinePlotData, Measurements
-from backend.domain.bar_chart import DataDosageDistribution as DosageDistributionBarChartData, MeasurementsDosageDistribution as DosageDistributionMeasurements
+from backend.domain.bar_chart import DataDosageDistribution as DosageDistributionBarChartData, \
+    MeasurementsDosageDistribution as DosageDistributionMeasurements, DataHighestBolusDosage, \
+    MeasurementsHighestBolusDosage
 
 
 class MeasurementsResponseBody(BaseModel):
@@ -105,6 +107,41 @@ class DosageDistributionResponseBody(BaseModel):
             data=[
                 BarChartDataResponseBody.from_data(d) for d in data
             ],
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+        )
+class HighestBolusDosageMeasurementResponseBody(BaseModel):
+    percentage: float
+    tooltip_med: float
+    tooltip_max: float
+    tooltip_min: float
+
+    @classmethod
+    def from_data(cls, data: MeasurementsHighestBolusDosage) -> "HighestBolusDosageMeasurementResponseBody":
+        return cls(**asdict(data))
+
+
+class HighestBolusDosageDataResponseBody(BaseModel):
+    time: int
+    measurement: HighestBolusDosageMeasurementResponseBody
+
+    @classmethod
+    def from_data(cls, data: DataHighestBolusDosage) -> "HighestBolusDosageDataResponseBody":
+        return cls(
+            time=data.time,
+            measurement=HighestBolusDosageMeasurementResponseBody.from_data(data.measurements),
+        )
+
+
+class HighestBolusDosageDistributionResponseBody(BaseModel):
+    data: list[HighestBolusDosageDataResponseBody]
+    min_timestamp: datetime
+    max_timestamp: datetime
+
+    @classmethod
+    def from_data_and_timestamps(cls, data: list[DataHighestBolusDosage], min_timestamp: datetime, max_timestamp: datetime) -> "HighestBolusDosageDistributionResponseBody":
+        return cls(
+            data=[HighestBolusDosageDataResponseBody.from_data(d) for d in data],
             min_timestamp=min_timestamp,
             max_timestamp=max_timestamp,
         )
