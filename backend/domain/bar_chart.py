@@ -163,9 +163,10 @@ def hypoglycemia(
     bolus.index = pd.to_datetime(bolus.index)
     bolus = bolus.sort_index()
     bolus = bolus.loc[from_datetime:to_datetime]
-    bolus = bolus[["Carbs Input (g)"]]
-    bolus["self"] = bolus["Carbs Input (g)"] == 0.0
-    bolus["auto"] = bolus["Carbs Input (g)"] > 0.0
+    bolus = bolus[["Carbs Ratio"]]
+    bolus = bolus.fillna(0.0)
+    bolus["self"] = bolus["Carbs Ratio"] > 0.0
+    bolus["auto"] = bolus["Carbs Ratio"] == 0.0
     bolus["timestamp_round"] = bolus.index.round("h")
     bolus = bolus.groupby("timestamp_round").max()
     bolus = bolus[["self", "auto"]]

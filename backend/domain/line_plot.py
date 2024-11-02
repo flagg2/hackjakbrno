@@ -26,6 +26,7 @@ class Data:
 class Dose(Enum):
     AUTO = "auto"
     SELF = "self"
+    CARBS = "carbs"
     ALL = "all"
 
 
@@ -76,15 +77,18 @@ def line_plot_bolus(
     dose: Dose = Dose.ALL,
 ) -> list[Data]:
     df = pd.read_csv(file, header=1, index_col=0)
-    df = df[["Carbs Input (g)", "Insulin Delivered (U)"]]
+    df = df[["Carbs Input (g)", "Insulin Delivered (U)", "Carbs Ratio"]]
+    df = df.fillna(0.0)
     df.index = pd.to_datetime(df.index)
     df = df.sort_index()
     df = df.loc[from_datetime:to_datetime]
 
     if dose == Dose.AUTO:
-        df = df[df["Carbs Input (g)"] > 0.0]
+        df = df[df["Carbs Ratio"] == 0.0]
     elif dose == Dose.SELF:
-        df = df[df["Carbs Input (g)"] == 0.0]
+        df = df[(df["Carbs Input (g)"] == 0.0) & (df["Carbs Ratio"] > 0.0)]
+    elif dose == Dose.CARBS:
+        df = df[(df["Carbs Input (g)"] > 0.0) & (df["Carbs Ratio"] > 0.0)]
 
     df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step_in_minutes * step_in_minutes
     df_agg = df.groupby("minute_of_day")["Insulin Delivered (U)"].agg(
