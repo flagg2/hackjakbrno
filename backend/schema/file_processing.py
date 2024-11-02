@@ -87,7 +87,7 @@ class BarChartDataResponseBody(BaseModel):
     measurements: DosageDistributionMeasurementsResponseBody
 
     @classmethod
-    def from_data(cls, data: DosageDistributionBarChartData) -> "BarChartDataResponseBody":
+    def from_data_and_timestamps(cls, data: DosageDistributionBarChartData) -> "BarChartDataResponseBody":
         return cls(
             time=data.time,
             measurements=DosageDistributionMeasurementsResponseBody.from_dosage_distribution_measurements(data.measurements)
@@ -96,11 +96,15 @@ class BarChartDataResponseBody(BaseModel):
 
 class DosageDistributionResponseBody(BaseModel):
     data: list[BarChartDataResponseBody]
+    min_timestamp: datetime
+    max_timestamp: datetime
 
     @classmethod
-    def from_data(cls, data: list[DosageDistributionBarChartData]) -> "DosageDistributionResponseBody":
+    def from_data(cls, data: list[DosageDistributionBarChartData], min_timestamp: datetime, max_timestamp: datetime) -> "DosageDistributionResponseBody":
         return cls(
             data=[
                 BarChartDataResponseBody.from_data(d) for d in data
-            ]
+            ],
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
         )

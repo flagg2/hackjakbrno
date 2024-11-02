@@ -133,7 +133,9 @@ async def get_dosage_distribution(
                 to_datetime=to_datetime,
                 step_in_minutes=step_in_minutes,
             )
-            return DosageDistributionResponseBody.from_data(data)
+            start_basal, end_basal = extreme_timestamps(file_basal)
+            start_bolus, end_bolus = extreme_timestamps(file_bolus)
+            return DosageDistributionResponseBody.from_data_and_timestamps(data, min(start_basal, start_bolus), max(end_basal, end_bolus))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Error")
