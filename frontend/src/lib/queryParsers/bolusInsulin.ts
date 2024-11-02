@@ -4,7 +4,7 @@ import { createSearchParamsCache, parseAsJson } from "nuqs/server";
 
 export const bolusInsulinChartParamsSchema = z.object({
   dataInterval: z.enum(["30", "60", "120"]),
-  type: z.enum(["self", "auto", "all"]),
+  type: z.enum(["self", "carbs", "auto", "all"]),
   from: z.coerce.date(),
   to: z.coerce.date(),
 });

@@ -87,7 +87,7 @@ export const InsulinDistributionChart = ({
               timeMinutes={props.payload?.[0]?.payload?.time * 60 ?? 0}
             />
           )}
-          yAxisLabel="Blood Glucose Level (mg/dL)"
+          yAxisLabel="Bolus Insulin Level (U)"
         />
       </div>
     </div>

@@ -102,7 +102,7 @@ export const HighestBolusInsulinDistributionChart = ({
         <HighestBolusBarChartContent
           data={response.data}
           interval={interval}
-          yAxisLabel="Blood Glucose Level (mg/dL)"
+          yAxisLabel="Percentage"
         />
       </div>
     </div>

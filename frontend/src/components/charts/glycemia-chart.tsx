@@ -69,7 +69,7 @@ export const GlycemiaChart = ({ response }: GlycemiaChartProps) => {
         <StreamChartContent
           data={response.data}
           interval={interval}
-          yAxisLabel="Blood Glucose Level (mg/dL)"
+          yAxisLabel="Blood Glucose Level (mmol/l)"
         />
       </div>
     </div>

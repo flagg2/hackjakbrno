@@ -431,6 +431,74 @@
           }
         }
       }
+    },
+    "/insert-patient-embedding": {
+      "post": {
+        "summary": "Insert Patient Embedding",
+        "operationId": "insert_patient_embedding",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsertPatientEmbeddingResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-similar-patients": {
+      "get": {
+        "summary": "Insert Patient Embedding",
+        "operationId": "get_similar_patients",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSimilarPatientsResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -547,6 +615,18 @@
         "type": "string",
         "enum": ["auto", "self", "carbs", "all"],
         "title": "Dose"
+      },
+      "GetSimilarPatientsResponseBody": {
+        "properties": {
+          "patients": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Patients"
+          }
+        },
+        "type": "object",
+        "required": ["patients"],
+        "title": "GetSimilarPatientsResponseBody"
       },
       "GlycemiaResponseBody": {
         "properties": {
@@ -672,6 +752,18 @@
         "type": "object",
         "required": ["combination", "self_bolus", "auto_bolus", "other"],
         "title": "HypoglycemiaMesurementBody"
+      },
+      "InsertPatientEmbeddingResponseBody": {
+        "properties": {
+          "embedding": {
+            "items": { "type": "number" },
+            "type": "array",
+            "title": "Embedding"
+          }
+        },
+        "type": "object",
+        "required": ["embedding"],
+        "title": "InsertPatientEmbeddingResponseBody"
       },
       "MeasurementsResponseBody": {
         "properties": {

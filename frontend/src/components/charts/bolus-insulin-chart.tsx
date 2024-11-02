@@ -31,7 +31,8 @@ export const BolusInsulinChart = ({ response }: InsulinChartProps) => {
   ];
 
   const bolusTypeOptions: SelectOption<BolusInsulinChartParams["type"]>[] = [
-    { value: "self", label: "Self-administered" },
+    { value: "self", label: "Self-administered - without carbs" },
+    { value: "carbs", label: "Self-administered - with carbs" },
     { value: "auto", label: "Auto-administered" },
     { value: "all", label: "All" },
   ];

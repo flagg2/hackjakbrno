@@ -4,6 +4,14 @@
  * Pump Perfect
  * OpenAPI spec version: 0.1.0
  */
+export type GetSimilarPatientsParams = {
+file_id: string;
+};
+
+export type InsertPatientEmbeddingParams = {
+file_id: string;
+};
+
 export type GetHypoglycemiaDistributionParams = {
 file_id: string;
 from_datetime: string;
@@ -71,6 +79,10 @@ export interface MeasurementsResponseBody {
   q90: number;
 }
 
+export interface InsertPatientEmbeddingResponseBody {
+  embedding: number[];
+}
+
 export interface HypoglycemiaMesurementBody {
   auto_bolus: number;
   combination: number;
@@ -115,6 +127,10 @@ export interface GlycemiaResponseBody {
   data: DataResponseBody[];
   max_timestamp: string;
   min_timestamp: string;
+}
+
+export interface GetSimilarPatientsResponseBody {
+  patients: string[];
 }
 
 export type Dose = typeof Dose[keyof typeof Dose];
@@ -422,6 +438,84 @@ export const getGetHypoglycemiaDistributionUrl = (params: GetHypoglycemiaDistrib
 export const getHypoglycemiaDistribution = async (params: GetHypoglycemiaDistributionParams, options?: RequestInit): Promise<getHypoglycemiaDistributionResponse> => {
   
   const res = await fetch(getGetHypoglycemiaDistributionUrl(params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+
+  )
+  const data = await res.json()
+
+  return { status: res.status, data }
+}
+
+
+
+/**
+ * @summary Insert Patient Embedding
+ */
+export type insertPatientEmbeddingResponse = {
+  data: InsertPatientEmbeddingResponseBody;
+  status: number;
+}
+
+export const getInsertPatientEmbeddingUrl = (params: InsertPatientEmbeddingParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  return normalizedParams.size ? `http://localhost:8000/insert-patient-embedding?${normalizedParams.toString()}` : `http://localhost:8000/insert-patient-embedding`
+}
+
+export const insertPatientEmbedding = async (params: InsertPatientEmbeddingParams, options?: RequestInit): Promise<insertPatientEmbeddingResponse> => {
+  
+  const res = await fetch(getInsertPatientEmbeddingUrl(params),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+
+  )
+  const data = await res.json()
+
+  return { status: res.status, data }
+}
+
+
+
+/**
+ * @summary Insert Patient Embedding
+ */
+export type getSimilarPatientsResponse = {
+  data: GetSimilarPatientsResponseBody;
+  status: number;
+}
+
+export const getGetSimilarPatientsUrl = (params: GetSimilarPatientsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  return normalizedParams.size ? `http://localhost:8000/get-similar-patients?${normalizedParams.toString()}` : `http://localhost:8000/get-similar-patients`
+}
+
+export const getSimilarPatients = async (params: GetSimilarPatientsParams, options?: RequestInit): Promise<getSimilarPatientsResponse> => {
+  
+  const res = await fetch(getGetSimilarPatientsUrl(params),
   {      
     ...options,
     method: 'GET'
