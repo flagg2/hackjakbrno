@@ -1,4 +1,4 @@
-import { InsulinChartParams } from "@/lib/queryParsers/insulin";
+import { BasalInsulinChartParams } from "@/lib/queryParsers/basalInsulin";
 import { getBasalInsulin } from "../myApi";
 import { formatDate } from "../utils";
 
@@ -9,14 +9,8 @@ export type BasalInsulinResponse = Awaited<
 
 export async function fetchBasalInsulin(
   params: { fileId: string },
-  insulin: InsulinChartParams
+  insulin: BasalInsulinChartParams
 ) {
-  //   console.log({
-  //     file_id: params.fileId,
-  //     step: parseInt(insulin?.dataInterval ?? "60"),
-  //     from_datetime: insulin?.from,
-  //     to_datetime: insulin?.to,
-  //   });
   const { data, status } = await getBasalInsulin({
     file_id: params.fileId,
     step_in_minutes: parseInt(insulin.dataInterval ?? "60"),

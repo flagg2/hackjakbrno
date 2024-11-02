@@ -1,6 +1,9 @@
 import { fetchBasalInsulin } from "@/api/fetch/basalInsulin";
-import { InsulinChart } from "@/components/insulin-chart";
-import { insulinStateCache } from "@/lib/queryParsers/insulin";
+import { fetchBolusInsulin } from "@/api/fetch/bolusInsulin";
+import { BasalInsulinChart } from "@/components/basal-insulin-chart";
+import { BolusInsulinChart } from "@/components/bolus-insulin-chart";
+import { basalInsulinStateCache } from "@/lib/queryParsers/basalInsulin";
+import { bolusInsulinStateCache } from "@/lib/queryParsers/bolusInsulin";
 import { SearchParams } from "nuqs";
 type DataPageProps = {
   searchParams: SearchParams;
@@ -13,21 +16,25 @@ export default async function DataPage({
   searchParams,
   params,
 }: DataPageProps) {
-  console.log({ searchParams });
-  const parsed = insulinStateCache.parse(searchParams);
+  const basalParsed = basalInsulinStateCache.parse(searchParams);
+  const bolusParsed = bolusInsulinStateCache.parse(searchParams);
 
-  console.log({ parsed });
-
-  const response = await fetchBasalInsulin(
+  const basalResponse = await fetchBasalInsulin(
     { fileId: params.fileId },
-    parsed.insulin
+    basalParsed.basalInsulin
+  );
+  const bolusResponse = await fetchBolusInsulin(
+    { fileId: params.fileId },
+    bolusParsed.bolusInsulin
   );
 
-  //   console.log({ response });
+  console.log(basalResponse.data);
 
+  //   console.log({ response });
   return (
     <div className="container mx-auto mt-16">
-      <InsulinChart response={response} />
+      <BasalInsulinChart response={basalResponse} />
+      <BolusInsulinChart response={bolusResponse} />
     </div>
   );
 }

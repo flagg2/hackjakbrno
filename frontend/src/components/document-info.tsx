@@ -45,8 +45,10 @@ export default function DocumentInfo({ fileId }: DocumentInfoProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
-          <Link href="/upload">Upload new file </Link>
+        <DropdownMenuItem asChild>
+          <Link href="/upload" className="cursor-pointer">
+            Upload another file
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
