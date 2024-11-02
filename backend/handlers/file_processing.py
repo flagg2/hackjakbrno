@@ -30,7 +30,7 @@ async def get_glycemia(
         with os.scandir(f"/tmp/{file_id}") as entries:
             dirnames = [entry.name for entry in entries if (entry.is_dir() and (entry.name != "." and entry.name != ".." and entry.name != "__MACOSX"))]
             assert len(dirnames) == 1, dirnames
-            file = f"/tmp/{file_id}/{dirnames[0]}/cgm_data_1.csv",
+            file = f"/tmp/{file_id}/{dirnames[0]}/cgm_data_1.csv"
             data=line_plot_glycemia(
                 file=file,
                 from_datetime=from_datetime,
