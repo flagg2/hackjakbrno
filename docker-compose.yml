@@ -9,10 +9,15 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-      # depends_on:
-      #   - redis
+    depends_on:
+      - iris
 
-      # redis:
-      #   image: redis:latest
-      #   ports:
-      #     - "6379:6379"
+  iris:
+    image: intersystemsdc/iris-community:latest
+    container_name: iris-comm
+    ports:
+      - "1972:1972"
+      - "52773:52773"
+    environment:
+      - IRIS_PASSWORD=demo
+      - IRIS_USERNAME=demo
