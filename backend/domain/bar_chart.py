@@ -20,9 +20,9 @@ class DataDosageDistribution:
 @dataclass
 class MeasurementsHighestBolusDosage:
     percentage: float
-    toltip_med: float
-    toltip_max: float
-    toltip_min: float
+    tooltip_med: float
+    tooltip_max: float
+    tooltip_min: float
 
 
 @dataclass
@@ -120,9 +120,9 @@ def highest_bolus_dosage(
     df = df[df["Insulin Delivered (U)"] > df["Insulin Delivered (U)"].quantile(quantile)]
     df = df.groupby("hour_of_day")["Insulin Delivered (U)"].agg(
         percentage=lambda x: x.count() / df["Insulin Delivered (U)"].count(),
-        toltip_med="median",
-        toltip_max="max",
-        toltip_min="min",
+        tooltip_med="median",
+        tooltip_max="max",
+        tooltip_min="min",
     )
 
     return [
