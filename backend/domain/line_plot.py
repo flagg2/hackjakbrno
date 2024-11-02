@@ -69,7 +69,11 @@ def line_plot_glycemia(
     ]
 
 def line_plot_bolus(
-    file: str, from_datetime: datetime, to_datetime: datetime, step_in_minutes: int, dose: Dose
+    file: str,
+    from_datetime: datetime,
+    to_datetime: datetime,
+    step_in_minutes: int,
+    dose: Dose = Dose.ALL,
 ) -> list[Data]:
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["Carbs Input (g)", "Insulin Delivered (U)"]]
