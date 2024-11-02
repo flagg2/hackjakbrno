@@ -31,7 +31,7 @@ class Dose(Enum):
 
 
 def line_plot_glycemia(
-    file: str, from_datetime: datetime, to_datetime: datetime, step: int
+    file: str, from_datetime: datetime, to_datetime: datetime, step_in_minutes: int
 ) -> list[Data]:
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["CGM Glucose Value (mmol/l)"]]
@@ -39,7 +39,7 @@ def line_plot_glycemia(
     df = df.sort_index()
     df = df.loc[from_datetime:to_datetime]
 
-    df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
+    df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step_in_minutes * step_in_minutes
     df_agg = df.groupby("minute_of_day")["CGM Glucose Value (mmol/l)"].agg(
         median="median",
         mean="mean",
@@ -69,7 +69,7 @@ def line_plot_glycemia(
     ]
 
 def line_plot_bolus(
-    file: str, from_datetime: datetime, to_datetime: datetime, step: int, dose: Dose
+    file: str, from_datetime: datetime, to_datetime: datetime, step_in_minutes: int, dose: Dose
 ) -> list[Data]:
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["Carbs Input (g)", "Insulin Delivered (U)"]]
@@ -82,7 +82,7 @@ def line_plot_bolus(
     elif dose == Dose.SELF:
         df = df[df["Carbs Input (g)"] == 0.0]
 
-    df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
+    df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step_in_minutes * step_in_minutes
     df_agg = df.groupby("minute_of_day")["Insulin Delivered (U)"].agg(
         median="median",
         mean="mean",
@@ -113,7 +113,7 @@ def line_plot_bolus(
 
 
 def line_plot_basal(
-    file: str, from_datetime: datetime, to_datetime: datetime, step: int
+    file: str, from_datetime: datetime, to_datetime: datetime, step_in_minutes: int
 ) -> list[Data]:
     df = pd.read_csv(file, header=1, index_col=0)
     df = df[["Rate"]]
@@ -122,7 +122,7 @@ def line_plot_basal(
     df = df.resample("min").ffill()
     df = df.loc[from_datetime:to_datetime]
 
-    df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step * step
+    df["minute_of_day"] = (df.index.hour * 60 + df.index.minute) // step_in_minutes * step_in_minutes
     df_agg = df.groupby("minute_of_day")["Rate"].agg(
         median="median",
         mean="mean",

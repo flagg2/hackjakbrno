@@ -21,7 +21,7 @@ async def get_glycemia(
     file_id: UUID,
     from_datetime: datetime,
     to_datetime: datetime,
-    step: int = 60,
+    step_in_minutes: int = 60,
 ) -> GlycemiaResponseBody:
     try:
         with os.scandir(f"/tmp/{file_id}") as entries:
@@ -32,7 +32,7 @@ async def get_glycemia(
                     file=f"/tmp/{file_id}/{dirnames[0]}/cgm_data_1.csv",
                     from_datetime=from_datetime,
                     to_datetime=to_datetime,
-                    step=step,
+                    step_in_minutes=step_in_minutes,
                 )
             )
     except Exception as e:
@@ -50,7 +50,7 @@ async def get_basal_insulin(
         file_id: UUID,
         from_datetime: datetime,
         to_datetime: datetime,
-        step: int = 60,
+        step_in_minutes: int = 60,
 ) -> GlycemiaResponseBody:
     try:
         with os.scandir(f"/tmp/{file_id}") as entries:
@@ -61,7 +61,7 @@ async def get_basal_insulin(
                     file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/basal_data_1.csv",
                     from_datetime=from_datetime,
                     to_datetime=to_datetime,
-                    step=step,
+                    step_in_minutes=step_in_minutes,
                 )
             )
     except Exception as e:
@@ -80,7 +80,7 @@ async def get_bolus_insulin(
         file_id: UUID,
         from_datetime: datetime,
         to_datetime: datetime,
-        step: int = 60,
+        step_in_minutes: int = 60,
         dose: Dose = Dose.ALL,
 ) -> GlycemiaResponseBody:
     try:
@@ -92,7 +92,7 @@ async def get_bolus_insulin(
                     file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv",
                     from_datetime=from_datetime,
                     to_datetime=to_datetime,
-                    step=step,
+                    step_in_minutes=step_in_minutes,
                     dose=dose,
                 )
             )
