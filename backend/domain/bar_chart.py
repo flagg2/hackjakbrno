@@ -91,7 +91,7 @@ def dosage_distribution(
 
     return [
         DataDosageDistribution(
-            time=int(time),
+            time=int(time * 60),
             measurements=MeasurementsDosageDistribution(
                 basal=basal.loc[time, "Insulin Delivered (U)"],
                 auto_bolus=auto_bolus.loc[time, "Insulin Delivered (U)"],
@@ -127,7 +127,7 @@ def highest_bosul_dosage(
 
     return [
         DataHighestBolusDosage(
-            time=int(time),
+            time=int(time * 60),
             measurements=MeasurementsHighestBolusDosage(
                 percentage=row["percentage"],
                 toltip_med=row["toltip_med"],
@@ -204,7 +204,7 @@ def hypoglycemia(
 
     return [
         DataHypoglycemia(
-            time=int(time),
+            time=int(time * 60),
             measurements=MeasurementsHypoglycemia(
                 combination=row["hypo_combination"],
                 self_bolus=row["hypo_self"],
