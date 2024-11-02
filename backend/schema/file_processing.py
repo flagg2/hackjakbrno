@@ -40,7 +40,7 @@ class GlycemiaResponseBody(BaseModel):
         return cls(
             data=[DataResponseBody.from_data(d) for d in data],
             min_timestamp=min_timestamp,
-            max_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
         )
 
 
@@ -54,7 +54,7 @@ class BasalInsulinResponseBody(BaseModel):
         return cls(
             data=[DataResponseBody.from_data(d) for d in data],
             min_timestamp=min_timestamp,
-            max_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
         )
 
 
@@ -68,5 +68,5 @@ class BolusInsulinResponseBody(BaseModel):
         return cls(
             data=[DataResponseBody.from_data(d) for d in data],
             min_timestamp=min_timestamp,
-            max_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
         )
