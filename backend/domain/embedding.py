@@ -11,9 +11,9 @@ def get_embedding(file_basal: str, file_bolus: str, file_glycemia: str) -> list[
     vector = []
     for data in (basal, bolus, glycemia):
         for datapoint in data:
-            vector.append(datapoint.measurements.mean)
-            vector.append(datapoint.measurements.median)
-            vector.append(datapoint.measurements.min)
-            vector.append(datapoint.measurements.max)
+            vector.append(datapoint.measurements.mean.item())
+            vector.append(datapoint.measurements.median.item())
+            vector.append(datapoint.measurements.min.item())
+            vector.append(datapoint.measurements.max.item())
 
     return vector
