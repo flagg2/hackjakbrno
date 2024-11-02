@@ -4,6 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from backend.domain.line_plot import Data as LinePlotData, Measurements
+from backend.domain.bar_chart import Data as DosageDistributionBarChartData, Measurements as DosageDistributionMeasurements
 
 
 class MeasurementsResponseBody(BaseModel):
@@ -27,7 +28,7 @@ class DataResponseBody(BaseModel):
 
     @classmethod
     def from_data(cls, data: LinePlotData) -> "DataResponseBody":
-        return cls(**asdict(data))
+        return cls(time=data.time, measurements=MeasurementsResponseBody.from_measurements(data.measurements))
 
 
 class GlycemiaResponseBody(BaseModel):
@@ -69,4 +70,37 @@ class BolusInsulinResponseBody(BaseModel):
             data=[DataResponseBody.from_data(d) for d in data],
             min_timestamp=min_timestamp,
             max_timestamp=max_timestamp,
+        )
+
+
+class DosageDistributionMeasurementsResponseBody(BaseModel):
+    basal: float
+    auto_bolus: float
+    self_bolus: float
+
+    @classmethod
+    def from_dosage_distribution_measurements(cls, measurements: DosageDistributionMeasurements):
+        return cls(**asdict(measurements))
+
+class BarChartDataResponseBody(BaseModel):
+    time: int
+    measurements: DosageDistributionMeasurementsResponseBody
+
+    @classmethod
+    def from_data(cls, data: DosageDistributionBarChartData) -> "BarChartDataResponseBody":
+        return cls(
+            time=data.time,
+            measurements=DosageDistributionMeasurementsResponseBody.from_dosage_distribution_measurements(data.measurements)
+        )
+
+
+class DosageDistributionResponseBody(BaseModel):
+    data: list[BarChartDataResponseBody]
+
+    @classmethod
+    def from_data(cls, data: list[DosageDistributionBarChartData]) -> "DosageDistributionResponseBody":
+        return cls(
+            data=[
+                BarChartDataResponseBody.from_data(d) for d in data
+            ]
         )

@@ -6,10 +6,6 @@ RESPONSE=$(curl -X POST "http://localhost:8000/upload-zip" \
   -H "Content-Type: multipart/form-data" \
   -F "file=@IT 30 ENG.zip")
 
-# Extract file_id from the response using jq
-# You might need to install jq: sudo apt-get install jq (Ubuntu) or brew install jq (Mac)
-echo $RESPONSE
-
 FILE_ID=$(echo $RESPONSE | jq -r '.file_id')
 
 echo "File ID: $FILE_ID"
@@ -26,4 +22,7 @@ curl -X GET "http://localhost:8000/get-basal-insulin?file_id=$FILE_ID&from_datet
   -H "accept: application/json"
 
 curl -X GET "http://localhost:8000/get-bolus-insulin?file_id=$FILE_ID&from_datetime=$FROM_DATE&to_datetime=$TO_DATE&step_in_minutes=$STEP&dose=all" \
+  -H "accept: application/json"
+
+curl -X GET "http://localhost:8000/get-dosage-distribution?file_id=$FILE_ID&from_datetime=$FROM_DATE&to_datetime=$TO_DATE&step_in_minutes=$STEP" \
   -H "accept: application/json"
