@@ -56,7 +56,7 @@ async def get_basal_insulin(
             assert len(dirnames) == 1, dirnames
             return GlycemiaResponseBody(
                 data=line_plot_basal(
-                    file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv",
+                    file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/basal_data_1.csv",
                     from_datetime=from_datetime,
                     to_datetime=to_datetime,
                     step=step,
@@ -73,7 +73,7 @@ async def get_basal_insulin(
         status.HTTP_200_OK: {"model": BolusInsulinResponseBody},
     },
 )
-async def get_basal_insulin(
+async def get_bolus_insulin(
         file_id: UUID,
         from_datetime: datetime,
         to_datetime: datetime,
@@ -86,7 +86,7 @@ async def get_basal_insulin(
             assert len(dirnames) == 1, dirnames
             return GlycemiaResponseBody(
                 data=line_plot_bolus(
-                    file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/basal_data_1.csv",
+                    file=f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv",
                     from_datetime=from_datetime,
                     to_datetime=to_datetime,
                     step=step,
