@@ -4,9 +4,9 @@ services:
   web:
     build:
       context: .
-    command: ./entrypoint.sh
+    command: /app/entrypoint.sh
     volumes:
-      - .:/app
+      - ./backend:/app/backend  # Only mount the source codes:
     ports:
       - "8000:8000"
     depends_on:

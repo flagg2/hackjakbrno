@@ -1,18 +1,17 @@
-import asyncio
-
-from sqlalchemy import text
 from backend.iris import engine
+from sqlalchemy import text
 
-async def init_tables():
-    async with engine.connect() as conn:
-        async with conn.begin():
+def init_tables():
+    with engine.connect() as conn:
+        with conn.begin():
             sql = f"""
                 CREATE TABLE patients ( patient_id VARCHAR,
                 description_vector VECTOR(FLOAT, 384)
                 )
             """
-            await conn.execute(text(sql))
+            conn.execute(text(sql))
 
 
 if __name__ == "__main__":
-    asyncio.run(init_tables())
+    pass
+    # init_tables()

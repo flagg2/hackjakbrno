@@ -600,7 +600,7 @@ files = [
 ]
 
 [package.dependencies]
-greenlet = {version = "!=0.4.17", markers = "python_version < \"3.13\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\")"}
+greenlet = {version = "!=0.4.17", optional = true, markers = "python_version < \"3.13\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\") or extra == \"asyncio\""}
 typing-extensions = ">=4.6.0"
 
 [package.extras]
@@ -627,6 +627,20 @@ postgresql-psycopg2cffi = ["psycopg2cffi"]
 postgresql-psycopgbinary = ["psycopg[binary] (>=3.0.7)"]
 pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
+
+[[package]]
+name = "sqlalchemy-iris"
+version = "0.15.3"
+description = "InterSystems IRIS for SQLAlchemy"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "sqlalchemy_iris-0.15.3-py3-none-any.whl", hash = "sha256:0bb240ac5e876d461dac087af2c6bd483d6fa0c4b1fa0bf507b8f91b6ad0749f"},
+    {file = "sqlalchemy_iris-0.15.3.tar.gz", hash = "sha256:d7977beba47a373bddc9d03eace04270fddaa8eeb3d09f4bf64647cab2309e34"},
+]
+
+[package.dependencies]
+SQLAlchemy = ">=1.3"
 
 [[package]]
 name = "starlette"
@@ -689,4 +703,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "e9ef84e94d08201378f038affd87c3409942b3012c53b661bd169df105c7171b"
+content-hash = "5668956d1ba0ee6646382dbd634b6e47e59d460318ee3b864ca947287b43f15c"
