@@ -21,7 +21,7 @@ import { InputLabel } from "./input-label";
 import { useQueryState } from "nuqs";
 import { chartColors } from "@/const/colors";
 import { ChartTooltip } from "./chart-tooltip";
-import { BasalInsulinData } from "@/api/fetch/basalInsulin";
+import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
 import { DatePicker } from "./ui/datepicker";
 import {
   InsulinChartParams,
@@ -62,16 +62,16 @@ const OptionSelect = <T extends string>({
 );
 
 type InsulinChartProps = {
-  data: BasalInsulinData;
+  response: BasalInsulinResponse;
 };
 
-export const InsulinChart = ({ data }: InsulinChartProps) => {
+export const InsulinChart = ({ response }: InsulinChartProps) => {
   const [params, setParams] = useQueryState(
     "chartParams",
     insulinParsers.insulin
   );
 
-  const chartData = data.map(({ time, measurements }) => ({
+  const chartData = response.data.map(({ time, measurements }) => ({
     time,
     min: measurements.min,
     max: measurements.max,
@@ -100,6 +100,7 @@ export const InsulinChart = ({ data }: InsulinChartProps) => {
           <InputLabel label="From">
             <DatePicker
               date={params?.from}
+              //   fromDate={response.min_timestamp}
               setDate={(date) =>
                 setParams({ ...params, from: date ?? new Date(0) })
               }

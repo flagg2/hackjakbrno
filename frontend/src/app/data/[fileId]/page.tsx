@@ -15,13 +15,13 @@ export default async function DataPage({
 }: DataPageProps) {
   const { insulin } = insulinStateCache.parse(searchParams);
 
-  const data = await fetchBasalInsulin({ fileId: params.fileId }, insulin);
+  const response = await fetchBasalInsulin({ fileId: params.fileId }, insulin);
 
-  console.log({ data });
+  console.log({ response });
 
   return (
     <div className="container mx-auto mt-16">
-      <InsulinChart data={data} />
+      <InsulinChart response={response} />
     </div>
   );
 }

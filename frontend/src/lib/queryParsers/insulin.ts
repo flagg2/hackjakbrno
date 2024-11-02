@@ -19,7 +19,7 @@ export const insulinParsers = {
   insulin: parseAsJson(insulinChartParamsSchema.parse).withDefault({
     dataInterval: "15",
     bolusType: "all",
-    from: new Date(),
+    from: new Date(0),
     to: new Date(),
   }),
 };

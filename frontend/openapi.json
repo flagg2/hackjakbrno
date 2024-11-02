@@ -68,10 +68,14 @@
             }
           },
           {
-            "name": "step",
+            "name": "step_in_minutes",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "default": 60, "title": "Step" }
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
           }
         ],
         "responses": {
@@ -128,10 +132,14 @@
             }
           },
           {
-            "name": "step",
+            "name": "step_in_minutes",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "default": 60, "title": "Step" }
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
           }
         ],
         "responses": {
@@ -188,10 +196,14 @@
             }
           },
           {
-            "name": "step",
+            "name": "step_in_minutes",
             "in": "query",
             "required": false,
-            "schema": { "type": "integer", "default": 60, "title": "Step" }
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
           },
           {
             "name": "dose",
@@ -231,10 +243,20 @@
             "items": { "$ref": "#/components/schemas/DataResponseBody" },
             "type": "array",
             "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
           }
         },
         "type": "object",
-        "required": ["data"],
+        "required": ["data", "min_timestamp", "max_timestamp"],
         "title": "BasalInsulinResponseBody"
       },
       "Body_upload_zip": {
@@ -251,10 +273,20 @@
             "items": { "$ref": "#/components/schemas/DataResponseBody" },
             "type": "array",
             "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
           }
         },
         "type": "object",
-        "required": ["data"],
+        "required": ["data", "min_timestamp", "max_timestamp"],
         "title": "BolusInsulinResponseBody"
       },
       "DataResponseBody": {
@@ -279,10 +311,20 @@
             "items": { "$ref": "#/components/schemas/DataResponseBody" },
             "type": "array",
             "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
           }
         },
         "type": "object",
-        "required": ["data"],
+        "required": ["data", "min_timestamp", "max_timestamp"],
         "title": "GlycemiaResponseBody"
       },
       "HTTPValidationError": {

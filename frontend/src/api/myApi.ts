@@ -8,7 +8,7 @@ export type GetBolusInsulinParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
-step?: number;
+step_in_minutes?: number;
 dose?: Dose;
 };
 
@@ -16,14 +16,14 @@ export type GetBasalInsulinParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
-step?: number;
+step_in_minutes?: number;
 };
 
 export type GetGlycemiaParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
-step?: number;
+step_in_minutes?: number;
 };
 
 export type ValidationErrorLocItem = string | number;
@@ -55,6 +55,8 @@ export interface HTTPValidationError {
 
 export interface GlycemiaResponseBody {
   data: DataResponseBody[];
+  max_timestamp: string;
+  min_timestamp: string;
 }
 
 export type Dose = typeof Dose[keyof typeof Dose];
@@ -74,6 +76,8 @@ export interface DataResponseBody {
 
 export interface BolusInsulinResponseBody {
   data: DataResponseBody[];
+  max_timestamp: string;
+  min_timestamp: string;
 }
 
 export interface BodyUploadZip {
@@ -82,6 +86,8 @@ export interface BodyUploadZip {
 
 export interface BasalInsulinResponseBody {
   data: DataResponseBody[];
+  max_timestamp: string;
+  min_timestamp: string;
 }
 
 

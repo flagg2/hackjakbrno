@@ -3,43 +3,26 @@ import { getBasalInsulin } from "../myApi";
 import { formatDate } from "../utils";
 
 // Define the return type from the API
-export type BasalInsulinData = Awaited<
+export type BasalInsulinResponse = Awaited<
   ReturnType<typeof getBasalInsulin>
->["data"]["data"];
+>["data"];
 
 export async function fetchBasalInsulin(
   params: { fileId: string },
-  insulin?: InsulinChartParams
+  insulin: InsulinChartParams
 ) {
   console.log({
     file_id: params.fileId,
     step: parseInt(insulin?.dataInterval ?? "60"),
-    ...getFromToDatetime(insulin?.timePeriod ?? "last7"),
+    from_datetime: insulin?.from,
+    to_datetime: insulin?.to,
   });
-  const {
-    data: { data },
-    status,
-  } = await getBasalInsulin({
+  const { data, status } = await getBasalInsulin({
     file_id: params.fileId,
-    step: parseInt(insulin?.dataInterval ?? "60"),
-    ...getFromToDatetime(insulin?.timePeriod ?? "last7"),
+    step_in_minutes: parseInt(insulin.dataInterval ?? "60"),
+    from_datetime: formatDate(insulin.from),
+    to_datetime: formatDate(insulin.to),
   });
-
-  console.log({ status });
 
   return data;
-}
-
-function getFromToDatetime(lastDays: "last7" | "last30" | "last90") {
-  const now = new Date();
-  const date = new Date(now);
-  date.setDate(
-    date.getDate() -
-      (lastDays === "last7" ? 7 : lastDays === "last30" ? 30 : 90)
-  );
-
-  return {
-    from_datetime: formatDate(date),
-    to_datetime: formatDate(now),
-  };
 }
