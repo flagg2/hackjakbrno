@@ -15,6 +15,7 @@ router = APIRouter()
     responses = {
         status.HTTP_200_OK: {"model": GlycemiaResponseBody},
     },
+    operation_id="get_glycemia"
 )
 async def get_glycemia(
     file_id: UUID,
@@ -43,6 +44,7 @@ async def get_glycemia(
     responses = {
         status.HTTP_200_OK: {"model": BasalInsulinResponseBody},
     },
+    operation_id="get_basal_insulin"
 )
 async def get_basal_insulin(
         file_id: UUID,
@@ -72,6 +74,7 @@ async def get_basal_insulin(
     responses = {
         status.HTTP_200_OK: {"model": BolusInsulinResponseBody},
     },
+    operation_id="get_bolus_insulin"
 )
 async def get_bolus_insulin(
         file_id: UUID,
