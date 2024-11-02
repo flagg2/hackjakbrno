@@ -35,8 +35,9 @@ def bar_chart(
     file_bolus: str,
     from_datetime: datetime,
     to_datetime: datetime,
-    step: int,
+    step_in_minutes: int,
 ) -> list[Data]:
+    step = step_in_minutes // 60
     basal = pd.read_csv(file_basal, header=1, index_col=0)
     basal = basal[["Rate"]]
     basal.index = pd.to_datetime(basal.index)
