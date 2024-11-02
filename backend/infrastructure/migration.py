@@ -6,8 +6,8 @@ def init_tables():
     with engine.connect() as conn:
         with conn.begin():
             sql = f"""
-                CREATE TABLE patients ( patient_id VARCHAR,
-                description_vector VECTOR(DOUBLE, 384)
+                CREATE TABLE IF NOT EXISTS patients ( patient_id VARCHAR,
+                embedding VECTOR(DOUBLE, 384)
                 )
             """
             conn.execute(text(sql))
@@ -16,4 +16,3 @@ def init_tables():
 if __name__ == "__main__":
     init_tables()
     print("MIGRATION DONE")
-    # pass
