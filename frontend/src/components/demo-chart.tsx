@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React from "react";
 import {
   Line,
   Area,
@@ -16,7 +18,8 @@ import {
   SelectValue,
 } from "./ui/select";
 import { InputLabel } from "./input-label";
-import { parseAsStringEnum, useQueryState } from "nuqs";
+import { parseAsJson, useQueryState } from "nuqs";
+import { z } from "zod";
 import { chartColors } from "@/const/colors";
 import { ChartTooltip } from "./chart-tooltip";
 
@@ -175,45 +178,45 @@ const OptionSelect = <T extends string>({
   </Select>
 );
 
-export const DemoChart = () => {
-  const [timePeriod, setTimePeriod] = useQueryState(
-    "timePeriod",
-    parseAsStringEnum(["last7", "last30", "last90"]).withDefault("last7")
-  );
+const chartParamsSchema = z.object({
+  timePeriod: z.enum(["last7", "last30", "last90"]).default("last7"),
+  dataInterval: z.enum(["15", "30", "60"]).default("15"),
+  bolusType: z
+    .enum(["self-administered", "auto-administered", "all"])
+    .default("self-administered"),
+});
 
-  const [dataInterval, setDataInterval] = useQueryState(
-    "dataInterval",
-    parseAsStringEnum(["15", "30", "60"]).withDefault("15")
-  );
+type ChartParams = z.infer<typeof chartParamsSchema>;
 
-  const [bolusType, setBolusType] = useQueryState(
-    "bolusType",
-    parseAsStringEnum([
-      "self-administered",
-      "auto-administered",
-      "all",
-    ]).withDefault("self-administered")
+export const InsulinChart = () => {
+  const [params, setParams] = useQueryState(
+    "chartParams",
+    parseAsJson(chartParamsSchema.parse)
   );
+  console.log({ params });
 
-  const timeRangeOptions: SelectOption<"last7" | "last30" | "last90">[] = [
+  const timeRangeOptions: SelectOption<ChartParams["timePeriod"]>[] = [
     { value: "last7", label: "Last 7 days" },
     { value: "last30", label: "Last 30 days" },
     { value: "last90", label: "Last 90 days" },
   ];
 
-  const intervalOptions: SelectOption<"15" | "30" | "60">[] = [
+  const intervalOptions: SelectOption<ChartParams["dataInterval"]>[] = [
     { value: "15", label: "15 minutes" },
     { value: "30", label: "30 minutes" },
     { value: "60", label: "1 hour" },
   ];
 
-  const bolusTypeOptions: SelectOption<
-    "self-administered" | "auto-administered" | "all"
-  >[] = [
+  const bolusTypeOptions: SelectOption<ChartParams["bolusType"]>[] = [
     { value: "self-administered", label: "Self-administered" },
     { value: "auto-administered", label: "Auto-administered" },
     { value: "all", label: "All" },
   ];
+
+  const updateParams =
+    (key: keyof ChartParams) => (value: ChartParams[keyof ChartParams]) => {
+      setParams({ ...params, [key]: value });
+    };
 
   return (
     <div className="">
@@ -221,24 +224,24 @@ export const DemoChart = () => {
         <h2 className="text-2xl font-bold mb-4">Glucose Chart</h2>
         <div className="flex items-center gap-4  mb-4">
           <InputLabel label="Time period">
-            <OptionSelect<"last7" | "last30" | "last90">
+            <OptionSelect<ChartParams["timePeriod"]>
               options={timeRangeOptions}
-              defaultValue="last7"
-              onValueChange={setTimePeriod}
+              defaultValue={params?.timePeriod ?? "last7"}
+              onValueChange={updateParams("timePeriod")}
             />
           </InputLabel>
           <InputLabel label="Data interval">
-            <OptionSelect<"15" | "30" | "60">
+            <OptionSelect<ChartParams["dataInterval"]>
               options={intervalOptions}
-              defaultValue="15"
-              onValueChange={setDataInterval}
+              defaultValue={params?.dataInterval ?? "15"}
+              onValueChange={updateParams("dataInterval")}
             />
           </InputLabel>
           <InputLabel label="Bolus type">
-            <OptionSelect<"self-administered" | "auto-administered" | "all">
+            <OptionSelect<ChartParams["bolusType"]>
               options={bolusTypeOptions}
-              defaultValue="self-administered"
-              onValueChange={setBolusType}
+              defaultValue={params?.bolusType ?? "self-administered"}
+              onValueChange={updateParams("bolusType")}
             />
           </InputLabel>
         </div>

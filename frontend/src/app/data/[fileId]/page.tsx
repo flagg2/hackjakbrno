@@ -1,11 +1,18 @@
-"use client";
+import { InsulinChart } from "@/components/demo-chart";
+import { insulinStateCache } from "@/lib/queryParsers/insulin";
+import { SearchParams } from "nuqs";
+type DataPageProps = {
+  searchParams: SearchParams;
+};
 
-import { DemoChart } from "@/components/demo-chart";
+export default async function DataPage({ searchParams }: DataPageProps) {
+  const { insulin } = insulinStateCache.parse(searchParams);
 
-export default function Home() {
+  console.log({ insulin });
+
   return (
     <div className="container mx-auto mt-16">
-      <DemoChart />
+      <InsulinChart />
     </div>
   );
 }
