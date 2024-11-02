@@ -11,7 +11,7 @@ export async function fetchBasalInsulin(
   params: { fileId: string },
   insulin: BasalInsulinChartParams
 ) {
-  const { data, status } = await getBasalInsulin({
+  const { data } = await getBasalInsulin({
     file_id: params.fileId,
     step_in_minutes: parseInt(insulin.dataInterval ?? "60"),
     from_datetime: formatDate(insulin.from),

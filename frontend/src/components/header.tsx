@@ -8,7 +8,7 @@ type HeaderProps = {
 
 export default function Header({ fileId }: HeaderProps) {
   return (
-    <header className="bg-accent border-b">
+    <header className="bg-accent border-b sticky top-0 z-50">
       <div className="container mx-auto">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
