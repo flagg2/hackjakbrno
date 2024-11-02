@@ -7,7 +7,7 @@ import { InputLabel } from "../input-label";
 import { DatePicker } from "../ui/datepicker";
 
 import { OptionSelect, SelectOption } from "../option-select";
-import { StreamChart } from "./stream-chart";
+import { StreamChartContent } from "./content/stream-chart";
 import {
   BolusInsulinChartParams,
   useBolusInsulinState,
@@ -79,7 +79,7 @@ export const BolusInsulinChart = ({ response }: InsulinChartProps) => {
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
-        <StreamChart
+        <StreamChartContent
           data={response.data}
           interval={interval}
           yAxisLabel="Bolus Insulin Level (U)"

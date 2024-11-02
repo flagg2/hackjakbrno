@@ -7,7 +7,7 @@ import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
 import { DatePicker } from "../ui/datepicker";
 
 import { OptionSelect, SelectOption } from "../option-select";
-import { StreamChart } from "./stream-chart";
+import { StreamChartContent } from "./content/stream-chart";
 import {
   BasalInsulinChartParams,
   useBasalInsulinState,
@@ -86,7 +86,7 @@ export const BasalInsulinChart = ({ response }: InsulinChartProps) => {
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
-        <StreamChart
+        <StreamChartContent
           data={response.data}
           interval={interval}
           yAxisLabel="Basal Insulin Level (U/h)"

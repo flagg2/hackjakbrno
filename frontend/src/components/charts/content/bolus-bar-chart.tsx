@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 import { chartColors } from "@/const/colors";
-import { ChartTooltip } from "./stream-tooltip";
+import { ChartTooltip } from "../tooltips/stream-tooltip";
 import { InsulinDistributionResponse } from "@/api/fetch/insulin-distribution";
 import {
   NameType,
@@ -28,7 +28,7 @@ type InsulinChartProps = {
   ) => React.ReactNode;
 };
 
-export const BarChart = ({
+export const BarChartContent = ({
   data,
   interval,
   yAxisLabel,

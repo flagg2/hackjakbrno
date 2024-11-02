@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 import { chartColors } from "@/const/colors";
-import { ChartTooltip } from "./stream-tooltip";
+import { ChartTooltip } from "../tooltips/stream-tooltip";
 import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
 import { BolusInsulinResponse } from "@/api/fetch/bolusInsulin";
 
@@ -22,7 +22,7 @@ type InsulinChartProps = {
   yAxisLabel: string;
 };
 
-export const StreamChart = ({
+export const StreamChartContent = ({
   data,
   interval,
   yAxisLabel,

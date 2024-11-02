@@ -7,7 +7,7 @@ import { GlycemiaResponse } from "@/api/fetch/glycemia";
 import { DatePicker } from "../ui/datepicker";
 
 import { OptionSelect, SelectOption } from "../option-select";
-import { StreamChart } from "./stream-chart";
+import { StreamChartContent } from "./content/stream-chart";
 import {
   GlycemiaChartParams,
   useGlycemiaState,
@@ -66,7 +66,7 @@ export const GlycemiaChart = ({ response }: GlycemiaChartProps) => {
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
-        <StreamChart
+        <StreamChartContent
           data={response.data}
           interval={interval}
           yAxisLabel="Blood Glucose Level (mg/dL)"

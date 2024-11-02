@@ -4,11 +4,34 @@
  * Pump Perfect
  * OpenAPI spec version: 0.1.0
  */
+export type GetHypoglycemiaDistributionParams = {
+file_id: string;
+from_datetime: string;
+to_datetime: string;
+step_in_minutes?: number;
+};
+
+export type GetHighestBolusDosageDistributionParams = {
+file_id: string;
+from_datetime: string;
+to_datetime: string;
+step_in_minutes?: number;
+quantile?: number;
+};
+
 export type GetDosageDistributionParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
 step_in_minutes?: number;
+};
+
+export type GetBolusInsulinParams = {
+file_id: string;
+from_datetime: string;
+to_datetime: string;
+step_in_minutes?: number;
+dose?: Dose;
 };
 
 export type GetBasalInsulinParams = {
@@ -48,6 +71,42 @@ export interface MeasurementsResponseBody {
   q90: number;
 }
 
+export interface HypoglycemiaMesurementBody {
+  auto_bolus: number;
+  combination: number;
+  other: number;
+  self_bolus: number;
+}
+
+export interface HypoglycemiaDataResponseBody {
+  measurement: HypoglycemiaMesurementBody;
+  time: number;
+}
+
+export interface HypoglycemiaDistributionResponseBody {
+  data: HypoglycemiaDataResponseBody[];
+  max_timestamp: string;
+  min_timestamp: string;
+}
+
+export interface HighestBolusDosageMeasurementResponseBody {
+  percentage: number;
+  tooltip_max: number;
+  tooltip_med: number;
+  tooltip_min: number;
+}
+
+export interface HighestBolusDosageDataResponseBody {
+  measurement: HighestBolusDosageMeasurementResponseBody;
+  time: number;
+}
+
+export interface HighestBolusDosageDistributionResponseBody {
+  data: HighestBolusDosageDataResponseBody[];
+  max_timestamp: string;
+  min_timestamp: string;
+}
+
 export interface HTTPValidationError {
   detail?: ValidationError[];
 }
@@ -65,19 +124,14 @@ export type Dose = typeof Dose[keyof typeof Dose];
 export const Dose = {
   auto: 'auto',
   self: 'self',
+  carbs: 'carbs',
   all: 'all',
 } as const;
 
-export type GetBolusInsulinParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
-dose?: Dose;
-};
-
 export interface DosageDistributionResponseBody {
   data: BarChartDataResponseBody[];
+  max_timestamp: string;
+  min_timestamp: string;
 }
 
 export interface DosageDistributionMeasurementsResponseBody {
@@ -290,6 +344,84 @@ export const getGetDosageDistributionUrl = (params: GetDosageDistributionParams,
 export const getDosageDistribution = async (params: GetDosageDistributionParams, options?: RequestInit): Promise<getDosageDistributionResponse> => {
   
   const res = await fetch(getGetDosageDistributionUrl(params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+
+  )
+  const data = await res.json()
+
+  return { status: res.status, data }
+}
+
+
+
+/**
+ * @summary Get Highest Bolus Dosage Distribution
+ */
+export type getHighestBolusDosageDistributionResponse = {
+  data: HighestBolusDosageDistributionResponseBody;
+  status: number;
+}
+
+export const getGetHighestBolusDosageDistributionUrl = (params: GetHighestBolusDosageDistributionParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  return normalizedParams.size ? `http://localhost:8000/get-highest-bolus-dosage-distribution?${normalizedParams.toString()}` : `http://localhost:8000/get-highest-bolus-dosage-distribution`
+}
+
+export const getHighestBolusDosageDistribution = async (params: GetHighestBolusDosageDistributionParams, options?: RequestInit): Promise<getHighestBolusDosageDistributionResponse> => {
+  
+  const res = await fetch(getGetHighestBolusDosageDistributionUrl(params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+
+  )
+  const data = await res.json()
+
+  return { status: res.status, data }
+}
+
+
+
+/**
+ * @summary Get Hypoglycemia Distribution
+ */
+export type getHypoglycemiaDistributionResponse = {
+  data: HypoglycemiaDistributionResponseBody;
+  status: number;
+}
+
+export const getGetHypoglycemiaDistributionUrl = (params: GetHypoglycemiaDistributionParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  return normalizedParams.size ? `http://localhost:8000/get-hypoglycemia-distribution?${normalizedParams.toString()}` : `http://localhost:8000/get-hypoglycemia-distribution`
+}
+
+export const getHypoglycemiaDistribution = async (params: GetHypoglycemiaDistributionParams, options?: RequestInit): Promise<getHypoglycemiaDistributionResponse> => {
+  
+  const res = await fetch(getGetHypoglycemiaDistributionUrl(params),
   {      
     ...options,
     method: 'GET'

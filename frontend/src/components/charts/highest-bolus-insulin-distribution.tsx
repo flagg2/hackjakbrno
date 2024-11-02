@@ -6,30 +6,32 @@ import { InputLabel } from "../input-label";
 import { DatePicker } from "../ui/datepicker";
 
 import { OptionSelect, SelectOption } from "../option-select";
-import {
-  InsulinDistributionChartParams,
-  useInsulinDistributionState,
-} from "@/lib/queryParsers/insulin-distribution";
-import { InsulinDistributionResponse } from "@/api/fetch/insulin-distribution";
-import { BarChartContent } from "./content/bolus-bar-chart";
+import { InsulinDistributionChartParams } from "@/lib/queryParsers/insulin-distribution";
 import { endOfDay, max } from "date-fns";
-import { DistributionTooltip } from "./tooltips/distribution-tooltip";
+import {
+  HighestBolusInsulinDistributionChartParams,
+  useHighestBolusInsulinDistributionState,
+} from "@/lib/queryParsers/highest-bolus-insulin-distribution";
+import { HighestBolusInsulinDistributionResponse } from "@/api/fetch/highest-bolus-insulin-distribution";
+import { HighestBolusBarChartContent } from "./content/highest-bolus-bar-chart";
+import { Input } from "../ui/input";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
-type InsulinDistributionChartProps = {
-  response: InsulinDistributionResponse & {
+type HighestBolusInsulinDistributionChartProps = {
+  response: HighestBolusInsulinDistributionResponse & {
     min_timestamp: string;
     max_timestamp: string;
   };
 };
 
-export const InsulinDistributionChart = ({
+export const HighestBolusInsulinDistributionChart = ({
   response,
-}: InsulinDistributionChartProps) => {
-  const [state, setState] = useInsulinDistributionState();
+}: HighestBolusInsulinDistributionChartProps) => {
+  const [state, setState] = useHighestBolusInsulinDistributionState();
   const interval = parseInt(state.dataInterval);
 
   const intervalOptions: SelectOption<
-    InsulinDistributionChartParams["dataInterval"]
+    HighestBolusInsulinDistributionChartParams["dataInterval"]
   >[] = [
     //  { value: "30", label: "30 minutes" },
     { value: "60", label: "1 hour" },
@@ -38,10 +40,21 @@ export const InsulinDistributionChart = ({
 
   console.log({ ss: response.data });
 
+  const handleQuantileChange = useDebounce(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseFloat(e.target.value);
+      const boundedValue = Math.min(Math.max(value, 0), 1);
+      setState({ ...state, quantile: boundedValue });
+    },
+    300
+  );
+
   return (
     <div className="">
       <div className="">
-        <h2 className="text-2xl font-bold mb-4">Bolus Distribution Chart</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          Highest Bolus Distribution Chart
+        </h2>
         <div className="flex items-center gap-4  mb-4">
           <InputLabel label="From">
             <DatePicker
@@ -73,20 +86,22 @@ export const InsulinDistributionChart = ({
               }
             />
           </InputLabel>
+          <InputLabel label="Quantile">
+            <Input
+              type="number"
+              defaultValue="0.8"
+              max={1}
+              step={0.01}
+              min={0}
+              onChange={handleQuantileChange}
+            />
+          </InputLabel>
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
-        <BarChartContent
+        <HighestBolusBarChartContent
           data={response.data}
           interval={interval}
-          tooltipContent={(props) => (
-            // @ts-expect-error cant be bothered
-            <DistributionTooltip
-              {...props}
-              timeIntervalMinutes={interval}
-              timeMinutes={props.payload?.[0]?.payload?.time * 60 ?? 0}
-            />
-          )}
           yAxisLabel="Blood Glucose Level (mg/dL)"
         />
       </div>

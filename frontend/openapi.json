@@ -297,6 +297,140 @@
           }
         }
       }
+    },
+    "/get-highest-bolus-dosage-distribution": {
+      "get": {
+        "summary": "Get Highest Bolus Dosage Distribution",
+        "operationId": "get_highest_bolus_dosage_distribution",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "from_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From Datetime"
+            }
+          },
+          {
+            "name": "to_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To Datetime"
+            }
+          },
+          {
+            "name": "step_in_minutes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
+          },
+          {
+            "name": "quantile",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "number", "default": 0.8, "title": "Quantile" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HighestBolusDosageDistributionResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get-hypoglycemia-distribution": {
+      "get": {
+        "summary": "Get Hypoglycemia Distribution",
+        "operationId": "get_hypoglycemia_distribution",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "from_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From Datetime"
+            }
+          },
+          {
+            "name": "to_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To Datetime"
+            }
+          },
+          {
+            "name": "step_in_minutes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HypoglycemiaDistributionResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -393,15 +527,25 @@
             },
             "type": "array",
             "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
           }
         },
         "type": "object",
-        "required": ["data"],
+        "required": ["data", "min_timestamp", "max_timestamp"],
         "title": "DosageDistributionResponseBody"
       },
       "Dose": {
         "type": "string",
-        "enum": ["auto", "self", "all"],
+        "enum": ["auto", "self", "carbs", "all"],
         "title": "Dose"
       },
       "GlycemiaResponseBody": {
@@ -436,6 +580,98 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HighestBolusDosageDataResponseBody": {
+        "properties": {
+          "time": { "type": "integer", "title": "Time" },
+          "measurement": {
+            "$ref": "#/components/schemas/HighestBolusDosageMeasurementResponseBody"
+          }
+        },
+        "type": "object",
+        "required": ["time", "measurement"],
+        "title": "HighestBolusDosageDataResponseBody"
+      },
+      "HighestBolusDosageDistributionResponseBody": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/HighestBolusDosageDataResponseBody"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
+          }
+        },
+        "type": "object",
+        "required": ["data", "min_timestamp", "max_timestamp"],
+        "title": "HighestBolusDosageDistributionResponseBody"
+      },
+      "HighestBolusDosageMeasurementResponseBody": {
+        "properties": {
+          "percentage": { "type": "number", "title": "Percentage" },
+          "tooltip_med": { "type": "number", "title": "Tooltip Med" },
+          "tooltip_max": { "type": "number", "title": "Tooltip Max" },
+          "tooltip_min": { "type": "number", "title": "Tooltip Min" }
+        },
+        "type": "object",
+        "required": ["percentage", "tooltip_med", "tooltip_max", "tooltip_min"],
+        "title": "HighestBolusDosageMeasurementResponseBody"
+      },
+      "HypoglycemiaDataResponseBody": {
+        "properties": {
+          "time": { "type": "integer", "title": "Time" },
+          "measurement": {
+            "$ref": "#/components/schemas/HypoglycemiaMesurementBody"
+          }
+        },
+        "type": "object",
+        "required": ["time", "measurement"],
+        "title": "HypoglycemiaDataResponseBody"
+      },
+      "HypoglycemiaDistributionResponseBody": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/HypoglycemiaDataResponseBody"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "min_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Min Timestamp"
+          },
+          "max_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Max Timestamp"
+          }
+        },
+        "type": "object",
+        "required": ["data", "min_timestamp", "max_timestamp"],
+        "title": "HypoglycemiaDistributionResponseBody"
+      },
+      "HypoglycemiaMesurementBody": {
+        "properties": {
+          "combination": { "type": "integer", "title": "Combination" },
+          "self_bolus": { "type": "integer", "title": "Self Bolus" },
+          "auto_bolus": { "type": "integer", "title": "Auto Bolus" },
+          "other": { "type": "integer", "title": "Other" }
+        },
+        "type": "object",
+        "required": ["combination", "self_bolus", "auto_bolus", "other"],
+        "title": "HypoglycemiaMesurementBody"
       },
       "MeasurementsResponseBody": {
         "properties": {
