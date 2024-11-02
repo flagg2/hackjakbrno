@@ -102,7 +102,7 @@ def dosage_distribution(
     ]
 
 
-def highest_bosul_dosage(
+def highest_bolus_dosage(
     file: str,
     from_datetime: datetime,
     to_datetime: datetime,
