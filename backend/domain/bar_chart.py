@@ -21,6 +21,7 @@ def aggreate_df(df: pd.DataFrame, step: int) -> pd.DataFrame:
     df["round_timestamp"] = df.index.round("h")
 
     df = df.groupby("round_timestamp").sum()
+    df = df.resample('H').asfreq().fillna(0)
     df["hour_of_day"] = df.index.hour // step * step
 
     df = df.groupby("hour_of_day").mean()
@@ -52,7 +53,7 @@ def bar_chart(
 
     basal = basal.loc[from_datetime:to_datetime]
     basal = aggreate_df(basal, step)
-    
+
     auto_bolus = auto_bolus.loc[from_datetime:to_datetime]
     auto_bolus = aggreate_df(auto_bolus, step)
 
