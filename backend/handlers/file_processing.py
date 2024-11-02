@@ -138,13 +138,13 @@ async def get_dosage_distribution(
 
 
 @router.get(
-    "/get-highest-bolus-dosage",
+    "/get-highest-bolus-dosage-distribution",
     responses = {
         status.HTTP_200_OK: {"model": HighestBolusDosageDistributionResponseBody},
     },
-    operation_id="get_highest_bolus_dosage"
+    operation_id="get_highest_bolus_dosage_distribution"
 )
-async def get_highest_bolus_dosage(
+async def get_highest_bolus_dosage_distribution(
     file_id: UUID,
     from_datetime: datetime,
     to_datetime: datetime,
