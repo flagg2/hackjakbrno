@@ -6,7 +6,7 @@ import pandas as pd
 
 
 @dataclass
-class Measurements():
+class Measurements:
     median: float
     mean: float
     min: float
