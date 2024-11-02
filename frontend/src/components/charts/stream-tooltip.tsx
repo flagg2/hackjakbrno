@@ -34,8 +34,8 @@ const StatisticLine = ({ color, label, value }: StatisticLineProps) => (
 );
 
 function formatTime(minutes: number) {
-  let hours = Math.floor(minutes / 60);
-  let remainingMinutes = minutes % 60;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
   if (remainingMinutes === 0) {
     return `${hours}h`;
   }

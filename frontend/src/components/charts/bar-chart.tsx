@@ -8,19 +8,32 @@ import {
   ResponsiveContainer,
   ComposedChart,
   Bar,
+  TooltipProps,
 } from "recharts";
 
 import { chartColors } from "@/const/colors";
-import { ChartTooltip } from "./chart-tooltip";
+import { ChartTooltip } from "./stream-tooltip";
 import { InsulinDistributionResponse } from "@/api/fetch/insulin-distribution";
+import {
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 type InsulinChartProps = {
   data: InsulinDistributionResponse["data"];
   interval: number;
   yAxisLabel: string;
+  tooltipContent?: (
+    props: TooltipProps<ValueType, NameType>
+  ) => React.ReactNode;
 };
 
-export const BarChart = ({ data, interval, yAxisLabel }: InsulinChartProps) => {
+export const BarChart = ({
+  data,
+  interval,
+  yAxisLabel,
+  tooltipContent,
+}: InsulinChartProps) => {
   const xAxisLabel = "Time (hours)";
   const augmentedData = [
     ...data.map((d) => ({
@@ -74,17 +87,20 @@ export const BarChart = ({ data, interval, yAxisLabel }: InsulinChartProps) => {
           }}
         />
         <Tooltip
-          content={(props) => {
-            const time = props.payload?.[0]?.payload?.time;
-            if (time === 0) return null;
-            return (
-              <ChartTooltip
-                {...props}
-                timeMinutes={time * 60 + (interval === 120 ? 60 : 0)}
-                timeIntervalMinutes={interval}
-              />
-            );
-          }}
+          content={
+            tooltipContent ??
+            ((props) => {
+              const time = props.payload?.[0]?.payload?.time;
+              if (time === 0) return null;
+              return (
+                <ChartTooltip
+                  {...props}
+                  timeMinutes={time * 60 + (interval === 120 ? 60 : 0)}
+                  timeIntervalMinutes={interval}
+                />
+              );
+            })
+          }
         />
 
         {/* Replace the Area and Line components with these Bar components */}

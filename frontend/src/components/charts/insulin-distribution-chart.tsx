@@ -13,6 +13,7 @@ import {
 import { InsulinDistributionResponse } from "@/api/fetch/insulin-distribution";
 import { BarChart } from "./bar-chart";
 import { endOfDay, max } from "date-fns";
+import { DistributionTooltip } from "./distribution-tooltip";
 
 type InsulinDistributionChartProps = {
   response: InsulinDistributionResponse & {
@@ -35,7 +36,7 @@ export const InsulinDistributionChart = ({
     { value: "120", label: "2 hours" },
   ];
 
-  console.log({ response: response.data });
+  console.log({ ss: response.data });
 
   return (
     <div className="">
@@ -78,6 +79,13 @@ export const InsulinDistributionChart = ({
         <BarChart
           data={response.data}
           interval={interval}
+          tooltipContent={(props) => (
+            <DistributionTooltip
+              {...props}
+              timeIntervalMinutes={interval}
+              timeMinutes={props.payload?.[0]?.payload?.time * 60 ?? 0}
+            />
+          )}
           yAxisLabel="Blood Glucose Level (mg/dL)"
         />
       </div>

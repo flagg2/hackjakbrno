@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 import { chartColors } from "@/const/colors";
-import { ChartTooltip } from "./chart-tooltip";
+import { ChartTooltip } from "./stream-tooltip";
 import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
 import { BolusInsulinResponse } from "@/api/fetch/bolusInsulin";
 
