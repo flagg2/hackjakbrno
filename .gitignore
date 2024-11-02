@@ -1,0 +1,14 @@
+# Ignore VSCode settings directory
+.vscode/
+
+# Ignore PyCharm settings and project files
+.idea/
+
+# Ignore Python bytecode cache
+__pycache__/
+*.pyc
+
+# Ignore Cursor files (assuming they are dot files .cursor)
+.cursor
+
+.DS_Store
