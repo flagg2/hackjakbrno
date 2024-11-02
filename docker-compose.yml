@@ -9,8 +9,8 @@ services:
       - ./backend:/app/backend  # Only mount the source codes:
     ports:
       - "8000:8000"
-    depends_on:
-      - iris
+    networks:
+      - app-network
 
   iris:
     image: intersystemsdc/iris-community:latest
@@ -21,3 +21,10 @@ services:
     environment:
       - IRIS_PASSWORD=demo
       - IRIS_USERNAME=demo
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge

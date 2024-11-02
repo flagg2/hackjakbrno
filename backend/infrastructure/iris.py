@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 
 USERNAME = 'demo'
 PASSWORD = 'demo'
-HOSTNAME = 'localhost'
-PORT = '52773' 
+HOSTNAME = 'iris'
+PORT = '1972' 
 NAMESPACE = 'USER'
 CONNECTION_STRING = f"iris://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{NAMESPACE}"
 
