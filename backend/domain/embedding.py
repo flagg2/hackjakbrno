@@ -1,5 +1,5 @@
-from line_plot import line_plot_basal, line_plot_bolus, line_plot_glycemia
-from utils import extreme_timestamps
+from backend.domain.line_plot import line_plot_basal, line_plot_bolus, line_plot_glycemia
+from backend.domain.utils import extreme_timestamps
 
 
 def get_embedding(file_basal: str, file_bolus: str, file_glycemia: str) -> list[float]:
