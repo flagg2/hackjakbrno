@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi import status
 
-from backend.domain.bar_chart import bar_chart
+from backend.domain.bar_chart import dosage_distribution
 from backend.domain.line_plot import line_plot_glycemia, Dose, line_plot_bolus, line_plot_basal
 from backend.domain.utils import extreme_timestamps
 from backend.schema.file_processing import GlycemiaResponseBody, BasalInsulinResponseBody, BolusInsulinResponseBody, \
@@ -126,7 +126,7 @@ async def get_dosage_distribution(
             assert len(dirnames) == 1, dirnames
             file_basal = f"/tmp/{file_id}/{dirnames[0]}/Insulin data/basal_data_1.csv"
             file_bolus = f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv"
-            data=bar_chart(
+            data=dosage_distribution(
                 file_basal=file_basal,
                 file_bolus=file_bolus,
                 from_datetime=from_datetime,

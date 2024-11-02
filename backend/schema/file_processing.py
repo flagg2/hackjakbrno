@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from backend.domain.line_plot import Data as LinePlotData, Measurements
-from backend.domain.bar_chart import Data as DosageDistributionBarChartData, Measurements as DosageDistributionMeasurements
+from backend.domain.bar_chart import DataDosageDistribution as DosageDistributionBarChartData, MeasurementsDosageDistribution as DosageDistributionMeasurements
 
 
 class MeasurementsResponseBody(BaseModel):

@@ -1,18 +1,16 @@
 import asyncio
 
 from sqlalchemy import text
-
 from backend.iris import engine
 
 async def init_tables():
     async with engine.connect() as conn:
-        async with conn.begin():# Load 
+        async with conn.begin():
             sql = f"""
-            CREATE TABLE patients (
-            patient_id VARCHAR,
-            description_vector VECTOR(FLOAT, 384)
-            )
-                    """
+                CREATE TABLE patients ( patient_id VARCHAR,
+                description_vector VECTOR(FLOAT, 384)
+                )
+            """
             await conn.execute(text(sql))
 
 
