@@ -129,7 +129,7 @@ def highest_bolus_dosage(
         DataHighestBolusDosage(
             time=int(time * 60),
             measurements=MeasurementsHighestBolusDosage(
-                percentage=row["percentage"],
+                percentage=row["percentage"] * 100,
                 tooltip_med=row["tooltip_med"],
                 tooltip_max=row["tooltip_max"],
                 tooltip_min=row["tooltip_min"],
