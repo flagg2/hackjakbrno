@@ -31,6 +31,20 @@ class DataHighestBolusDosage:
     measurements: MeasurementsHighestBolusDosage
 
 
+@dataclass
+class MeasurementsHypoglycemia:
+    combination: int
+    self_bolus: int
+    auto_bolus: int
+    other: int
+
+
+@dataclass
+class DataHypoglycemia:
+    time: int
+    measurements: MeasurementsHypoglycemia
+
+
 def aggreate_df(df: pd.DataFrame, step: int) -> pd.DataFrame:
     df["round_timestamp"] = df.index.round("h")
 
@@ -123,3 +137,81 @@ def highest_bosul_dosage(
         )
         for time, row in df.iterrows()
     ]
+
+
+def hypoglycemia(
+    file_bolus: str,
+    file_glucose: str,
+    from_datetime: datetime,
+    to_datetime: datetime,
+    step_in_minutes: int,
+) -> list[DataHypoglycemia]:
+    step = step_in_minutes // 60
+    glucose = pd.read_csv(file_glucose, header=1, index_col=0)
+    glucose.index = pd.to_datetime(glucose.index)
+    glucose = glucose.sort_index()
+    glucose = glucose.loc[from_datetime:to_datetime]
+    glucose = glucose[["CGM Glucose Value (mmol/l)"]]
+    glucose["timestamp_round"] = glucose.index.round("h")
+    glucose = glucose.groupby("timestamp_round").min()
+    glucose["hypoglycemia"] = glucose["CGM Glucose Value (mmol/l)"] < 3.9
+    glucose["hypoglycemia+1"] = glucose["hypoglycemia"].shift(-1)
+    glucose["hypoglycemia+2"] = glucose["hypoglycemia"].shift(-2)
+    glucose = glucose[["hypoglycemia", "hypoglycemia+1", "hypoglycemia+2"]]
+
+    bolus = pd.read_csv(file_bolus, header=1, index_col=0)
+    bolus.index = pd.to_datetime(bolus.index)
+    bolus = bolus.sort_index()
+    bolus = bolus.loc[from_datetime:to_datetime]
+    bolus = bolus[["Carbs Input (g)"]]
+    bolus["self"] = bolus["Carbs Input (g)"] == 0.0
+    bolus["auto"] = bolus["Carbs Input (g)"] > 0.0
+    bolus["timestamp_round"] = bolus.index.round("h")
+    bolus = bolus.groupby("timestamp_round").max()
+    bolus = bolus[["self", "auto"]]
+    merged = glucose.merge(bolus, on="timestamp_round", how="outer").fillna(False)
+
+    merged["self-1"] = merged["self"].shift(1)
+    merged["self-2"] = merged["self"].shift(2)
+    merged["self+1"] = merged["self"].shift(-1)
+    merged["self+2"] = merged["self"].shift(-2)
+    merged = merged.fillna(False)
+    merged["hypo_combination"] = merged["auto"] & (
+        merged["hypoglycemia"] | merged["hypoglycemia+1"] | merged["hypoglycemia+2"]
+    ) & (
+        merged["self-1"] | merged["self-2"] | merged["self+1"] | merged["self+2"] | merged["self"]
+    ) 
+
+    merged["hypo_auto"] = merged["auto"] & (
+        merged["hypoglycemia"] | merged["hypoglycemia+1"] | merged["hypoglycemia+2"]
+    ) & ~(
+        merged["self-1"] | merged["self-2"] | merged["self+1"] | merged["self+2"] | merged["self"]
+    )
+
+    merged["hypo_self"] = merged["self"] & (
+        merged["hypoglycemia"] | merged["hypoglycemia+1"] | merged["hypoglycemia+2"]
+    ) & ~merged["auto"]
+
+    merged["hypo_other"] = ~merged["auto"] & merged["hypoglycemia"] & ~(
+        merged["self-1"] | merged["self-2"] | merged["self+1"] | merged["self+2"] | merged["self"]
+    )
+
+    merged["hour"] = merged.index.hour // step * step
+    merged = merged.groupby("hour")[
+        ["hypo_combination", "hypo_auto", "hypo_self", "hypo_other"]
+    ].sum()
+
+
+    return [
+        DataHypoglycemia(
+            time=int(time),
+            measurements=MeasurementsHypoglycemia(
+                combination=row["hypo_combination"],
+                self_bolus=row["hypo_self"],
+                auto_bolus=row["hypo_auto"],
+                other=row["hypo_other"],
+            )
+        )
+        for time, row in merged.iterrows()
+    ]
+    

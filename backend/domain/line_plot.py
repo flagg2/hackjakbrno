@@ -134,8 +134,8 @@ def line_plot_basal(
         max="max",
         q10=lambda x: x.quantile(0.10),
         q25=lambda x: x.quantile(0.25),
-        q75=lambda x: x.quantile(0.90),
-        q90=lambda x: x.quantile(0.75),
+        q75=lambda x: x.quantile(0.75),
+        q90=lambda x: x.quantile(0.90),
     )
 
 
