@@ -5,11 +5,11 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi import status
 
-from backend.domain.bar_chart import dosage_distribution, highest_bolus_dosage
+from backend.domain.bar_chart import dosage_distribution, highest_bolus_dosage, hypoglycemia
 from backend.domain.line_plot import line_plot_glycemia, Dose, line_plot_bolus, line_plot_basal
 from backend.domain.utils import extreme_timestamps
 from backend.schema.file_processing import GlycemiaResponseBody, BasalInsulinResponseBody, BolusInsulinResponseBody, \
-    DosageDistributionResponseBody, HighestBolusDosageDistributionResponseBody
+    DosageDistributionResponseBody, HighestBolusDosageDistributionResponseBody, HypoglycemiaDistributionResponseBody
 
 router = APIRouter()
 
@@ -165,5 +165,38 @@ async def get_highest_bolus_dosage_distribution(
             )
             start_bolus, end_bolus = extreme_timestamps(file_bolus)
             return HighestBolusDosageDistributionResponseBody.from_data_and_timestamps(data, start_bolus, end_bolus)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Error")
+
+
+@router.get(
+    "/get-hypoglycemia-distribution",
+    responses = {
+        status.HTTP_200_OK: {"model": HypoglycemiaDistributionResponseBody},
+    },
+    operation_id="get_hypoglycemia_distribution"
+)
+async def get_hypoglycemia_distribution(
+        file_id: UUID,
+        from_datetime: datetime,
+        to_datetime: datetime,
+        step_in_minutes: int = 60,
+) -> HypoglycemiaDistributionResponseBody:
+    try:
+        with os.scandir(f"/tmp/{file_id}") as entries:
+            dirnames = [entry.name for entry in entries if (entry.is_dir() and (entry.name != "." and entry.name != ".." and entry.name != "__MACOSX"))]
+            assert len(dirnames) == 1, dirnames
+            file_bolus = f"/tmp/{file_id}/{dirnames[0]}/Insulin data/bolus_data_1.csv"
+            file_glucose = f"/tmp/{file_id}/{dirnames[0]}/cgm_data_1.csv"
+            data=hypoglycemia(
+                file_bolus=file_bolus,
+                file_glucose=file_glucose,
+                from_datetime=from_datetime,
+                to_datetime=to_datetime,
+                step_in_minutes=step_in_minutes,
+            )
+            start_bolus, end_bolus = extreme_timestamps(file_bolus)
+            start_glucose, end_glucose = extreme_timestamps(file_glucose)
+            return HypoglycemiaDistributionResponseBody.from_data_and_timestamps(data, min(start_bolus, start_glucose), max(end_bolus, end_glucose))
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal Error")

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from backend.domain.line_plot import Data as LinePlotData, Measurements
 from backend.domain.bar_chart import DataDosageDistribution as DosageDistributionBarChartData, \
     MeasurementsDosageDistribution as DosageDistributionMeasurements, DataHighestBolusDosage, \
-    MeasurementsHighestBolusDosage
+    MeasurementsHighestBolusDosage, DataHypoglycemia, MeasurementsHypoglycemia
 
 
 class MeasurementsResponseBody(BaseModel):
@@ -142,6 +142,42 @@ class HighestBolusDosageDistributionResponseBody(BaseModel):
     def from_data_and_timestamps(cls, data: list[DataHighestBolusDosage], min_timestamp: datetime, max_timestamp: datetime) -> "HighestBolusDosageDistributionResponseBody":
         return cls(
             data=[HighestBolusDosageDataResponseBody.from_data(d) for d in data],
+            min_timestamp=min_timestamp,
+            max_timestamp=max_timestamp,
+        )
+
+class HypoglycemiaMesurementBody(BaseModel):
+    combination: int
+    self_bolus: int
+    auto_bolus: int
+    other: int
+
+    @classmethod
+    def from_data(cls, data: MeasurementsHypoglycemia):
+        return cls(**asdict(data))
+
+class HypoglycemiaDataResponseBody(BaseModel):
+    time: int
+    measurement: HypoglycemiaMesurementBody
+
+    @classmethod
+    def from_data(cls, data: DataHypoglycemia) -> "HighestBolusDosageDataResponseBody":
+        return cls(
+            time=data.time,
+            measurement=HypoglycemiaMesurementBody.from_data(data.measurements),
+        )
+
+
+class HypoglycemiaDistributionResponseBody(BaseModel):
+    data: list[HypoglycemiaDataResponseBody]
+    min_timestamp: datetime
+    max_timestamp: datetime
+
+    @classmethod
+    def from_data_and_timestamps(cls, data: list[DataHypoglycemia], min_timestamp: datetime,
+                                 max_timestamp: datetime) -> "HypoglycemiaDistributionResponseBody":
+        return cls(
+            data=[HypoglycemiaDataResponseBody.from_data(d) for d in data],
             min_timestamp=min_timestamp,
             max_timestamp=max_timestamp,
         )
