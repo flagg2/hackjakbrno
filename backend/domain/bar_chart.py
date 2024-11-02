@@ -130,9 +130,9 @@ def highest_bolus_dosage(
             time=int(time * 60),
             measurements=MeasurementsHighestBolusDosage(
                 percentage=row["percentage"],
-                toltip_med=row["toltip_med"],
-                toltip_max=row["toltip_max"],
-                toltip_min=row["toltip_min"],
+                tooltip_med=row["tooltip_med"],
+                tooltip_max=row["tooltip_max"],
+                tooltip_min=row["tooltip_min"],
             )
         )
         for time, row in df.iterrows()
