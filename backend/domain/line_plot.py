@@ -24,9 +24,9 @@ class Data:
 
 
 class Dose(Enum):
-    AUTO = "AUTO"
-    SELF = "SELF"
-    ALL = "ALL"
+    AUTO = "auto"
+    SELF = "self"
+    ALL = "all"
 
 
 
