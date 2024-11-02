@@ -3,19 +3,25 @@ import { z } from "zod";
 import { createSearchParamsCache, parseAsJson } from "nuqs/server";
 
 export const insulinChartParamsSchema = z.object({
-  timePeriod: z.enum(["last7", "last30", "last90"]).default("last7"),
-  dataInterval: z.enum(["15", "30", "60"]).default("15"),
-  bolusType: z
-    .enum(["self-administered", "auto-administered", "all"])
-    .default("self-administered"),
+  dataInterval: z.enum(["15", "30", "60"]),
+  bolusType: z.enum(["self-administered", "auto-administered", "all"]),
+  from: z.coerce.date(),
+  to: z.coerce.date(),
 });
 
 export type InsulinChartParams = z.infer<typeof insulinChartParamsSchema>;
 
 export function useInsulinState() {
-  return useQueryState("insulinChartParams", parsers.insulin);
+  return useQueryState("insulinChartParams", insulinParsers.insulin);
 }
 
-const parsers = { insulin: parseAsJson(insulinChartParamsSchema.parse) };
+export const insulinParsers = {
+  insulin: parseAsJson(insulinChartParamsSchema.parse).withDefault({
+    dataInterval: "15",
+    bolusType: "all",
+    from: new Date(),
+    to: new Date(),
+  }),
+};
 
-export const insulinStateCache = createSearchParamsCache(parsers);
+export const insulinStateCache = createSearchParamsCache(insulinParsers);

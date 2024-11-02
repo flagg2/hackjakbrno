@@ -5,13 +5,11 @@
     "/upload-zip": {
       "post": {
         "summary": "Upload Zip",
-        "operationId": "upload_zip_upload_zip_post",
+        "operationId": "upload_zip",
         "requestBody": {
           "content": {
             "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_upload_zip_upload_zip_post"
-              }
+              "schema": { "$ref": "#/components/schemas/Body_upload_zip" }
             }
           },
           "required": true
@@ -41,7 +39,7 @@
     "/get-glycemia": {
       "get": {
         "summary": "Get Glycemia",
-        "operationId": "get_glycemia_get_glycemia_get",
+        "operationId": "get_glycemia",
         "parameters": [
           {
             "name": "file_id",
@@ -101,7 +99,7 @@
     "/get-basal-insulin": {
       "get": {
         "summary": "Get Basal Insulin",
-        "operationId": "get_basal_insulin_get_basal_insulin_get",
+        "operationId": "get_basal_insulin",
         "parameters": [
           {
             "name": "file_id",
@@ -161,7 +159,7 @@
     "/get-bolus-insulin": {
       "get": {
         "summary": "Get Bolus Insulin",
-        "operationId": "get_bolus_insulin_get_bolus_insulin_get",
+        "operationId": "get_bolus_insulin",
         "parameters": [
           {
             "name": "file_id",
@@ -230,7 +228,7 @@
       "BasalInsulinResponseBody": {
         "properties": {
           "data": {
-            "items": { "$ref": "#/components/schemas/Data" },
+            "items": { "$ref": "#/components/schemas/DataResponseBody" },
             "type": "array",
             "title": "Data"
           }
@@ -239,18 +237,18 @@
         "required": ["data"],
         "title": "BasalInsulinResponseBody"
       },
-      "Body_upload_zip_upload_zip_post": {
+      "Body_upload_zip": {
         "properties": {
           "file": { "type": "string", "format": "binary", "title": "File" }
         },
         "type": "object",
         "required": ["file"],
-        "title": "Body_upload_zip_upload_zip_post"
+        "title": "Body_upload_zip"
       },
       "BolusInsulinResponseBody": {
         "properties": {
           "data": {
-            "items": { "$ref": "#/components/schemas/Data" },
+            "items": { "$ref": "#/components/schemas/DataResponseBody" },
             "type": "array",
             "title": "Data"
           }
@@ -259,14 +257,16 @@
         "required": ["data"],
         "title": "BolusInsulinResponseBody"
       },
-      "Data": {
+      "DataResponseBody": {
         "properties": {
           "time": { "type": "integer", "title": "Time" },
-          "measurements": { "$ref": "#/components/schemas/Measurements" }
+          "measurements": {
+            "$ref": "#/components/schemas/MeasurementsResponseBody"
+          }
         },
         "type": "object",
         "required": ["time", "measurements"],
-        "title": "Data"
+        "title": "DataResponseBody"
       },
       "Dose": {
         "type": "string",
@@ -276,7 +276,7 @@
       "GlycemiaResponseBody": {
         "properties": {
           "data": {
-            "items": { "$ref": "#/components/schemas/Data" },
+            "items": { "$ref": "#/components/schemas/DataResponseBody" },
             "type": "array",
             "title": "Data"
           }
@@ -296,7 +296,7 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "Measurements": {
+      "MeasurementsResponseBody": {
         "properties": {
           "median": { "type": "number", "title": "Median" },
           "mean": { "type": "number", "title": "Mean" },
@@ -318,7 +318,7 @@
           "q75",
           "q90"
         ],
-        "title": "Measurements"
+        "title": "MeasurementsResponseBody"
       },
       "UploadZipResponseBody": {
         "properties": {

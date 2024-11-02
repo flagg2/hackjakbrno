@@ -18,133 +18,16 @@ import {
   SelectValue,
 } from "./ui/select";
 import { InputLabel } from "./input-label";
-import { parseAsJson, useQueryState } from "nuqs";
-import { z } from "zod";
+import { useQueryState } from "nuqs";
 import { chartColors } from "@/const/colors";
 import { ChartTooltip } from "./chart-tooltip";
-
-const data = [
-  {
-    time: 0,
-    min: 5,
-    p10: 6,
-    p25: 7,
-    median: 8,
-    p75: 9,
-    p90: 10,
-    max: 11,
-    p1090: [6, 10],
-    p2575: [7, 9],
-  },
-  {
-    time: 3,
-    min: 5.5,
-    p10: 6.5,
-    p25: 7.5,
-    median: 8.5,
-    p75: 9.5,
-    p90: 10.5,
-    max: 11.5,
-    p1090: [6.5, 10.5],
-    p2575: [7.5, 9.5],
-  },
-  {
-    time: 6,
-    min: 5.3,
-    p10: 6.2,
-    p25: 7.2,
-    median: 8.2,
-    p75: 9.2,
-    p90: 10.2,
-    max: 11.2,
-    p1090: [6.2, 10.2],
-    p2575: [7.2, 9.2],
-  },
-  {
-    time: 9,
-    min: 5.1,
-    p10: 6.1,
-    p25: 7.1,
-    median: 8.1,
-    p75: 9.1,
-    p90: 10.1,
-    max: 11.1,
-    p1090: [6.1, 10.1],
-    p2575: [7.1, 9.1],
-  },
-  {
-    time: 12,
-    min: 5.0,
-    p10: 6.0,
-    p25: 7.0,
-    median: 8.0,
-    p75: 9.0,
-    p90: 10.0,
-    max: 11.0,
-    p1090: [6.0, 10.0],
-    p2575: [7.0, 9.0],
-  },
-  {
-    time: 15,
-    min: 5.2,
-    p10: 6.2,
-    p25: 7.2,
-    median: 8.2,
-    p75: 9.2,
-    p90: 10.2,
-    max: 11.2,
-    p1090: [6.2, 10.2],
-    p2575: [7.2, 9.2],
-  },
-  {
-    time: 18,
-    min: 5.4,
-    p10: 6.4,
-    p25: 7.4,
-    median: 8.4,
-    p75: 9.4,
-    p90: 10.4,
-    max: 11.4,
-    p1090: [6.4, 10.4],
-    p2575: [7.4, 9.4],
-  },
-  {
-    time: 21,
-    min: 5.6,
-    p10: 6.6,
-    p25: 7.6,
-    median: 8.6,
-    p75: 9.6,
-    p90: 10.6,
-    max: 11.6,
-    p1090: [6.6, 10.6],
-    p2575: [7.6, 9.6],
-  },
-  {
-    time: 22,
-    min: 5.0,
-    p10: 6.0,
-    p25: 7.0,
-    median: 8.0,
-    p75: 9.0,
-    p90: 10.0,
-    max: 11.0,
-    p1090: [6.0, 10.0],
-    p2575: [7.0, 9.0],
-  },
-  {
-    time: 24,
-    min: 5.8,
-    p10: 6.8,
-    p25: 7.8,
-    median: 8.8,
-    p75: 9.8,
-    p90: 10.8,
-    max: 11.8,
-    p1090: [6.8, 10.8],
-    p2575: [7.8, 9.8],
-  },
-];
+import { BasalInsulinData } from "@/api/fetch/basalInsulin";
+import { DatePicker } from "./ui/datepicker";
+import {
+  InsulinChartParams,
+  insulinChartParamsSchema,
+  insulinParsers,
+} from "@/lib/queryParsers/insulin";
 
 type SelectOption<T extends string> = {
   value: T;
@@ -178,70 +61,75 @@ const OptionSelect = <T extends string>({
   </Select>
 );
 
-const chartParamsSchema = z.object({
-  timePeriod: z.enum(["last7", "last30", "last90"]).default("last7"),
-  dataInterval: z.enum(["15", "30", "60"]).default("15"),
-  bolusType: z
-    .enum(["self-administered", "auto-administered", "all"])
-    .default("self-administered"),
-});
+type InsulinChartProps = {
+  data: BasalInsulinData;
+};
 
-type ChartParams = z.infer<typeof chartParamsSchema>;
-
-export const InsulinChart = () => {
+export const InsulinChart = ({ data }: InsulinChartProps) => {
   const [params, setParams] = useQueryState(
     "chartParams",
-    parseAsJson(chartParamsSchema.parse)
+    insulinParsers.insulin
   );
-  console.log({ params });
 
-  const timeRangeOptions: SelectOption<ChartParams["timePeriod"]>[] = [
-    { value: "last7", label: "Last 7 days" },
-    { value: "last30", label: "Last 30 days" },
-    { value: "last90", label: "Last 90 days" },
-  ];
+  const chartData = data.map(({ time, measurements }) => ({
+    time,
+    min: measurements.min,
+    max: measurements.max,
+    median: measurements.median,
+    p1090: [measurements.q10, measurements.q90] as [number, number],
+    p2575: [measurements.q25, measurements.q75] as [number, number],
+  }));
 
-  const intervalOptions: SelectOption<ChartParams["dataInterval"]>[] = [
+  const intervalOptions: SelectOption<InsulinChartParams["dataInterval"]>[] = [
     { value: "15", label: "15 minutes" },
     { value: "30", label: "30 minutes" },
     { value: "60", label: "1 hour" },
   ];
 
-  const bolusTypeOptions: SelectOption<ChartParams["bolusType"]>[] = [
+  const bolusTypeOptions: SelectOption<InsulinChartParams["bolusType"]>[] = [
     { value: "self-administered", label: "Self-administered" },
     { value: "auto-administered", label: "Auto-administered" },
     { value: "all", label: "All" },
   ];
-
-  const updateParams =
-    (key: keyof ChartParams) => (value: ChartParams[keyof ChartParams]) => {
-      setParams({ ...params, [key]: value });
-    };
 
   return (
     <div className="">
       <div className="">
         <h2 className="text-2xl font-bold mb-4">Glucose Chart</h2>
         <div className="flex items-center gap-4  mb-4">
-          <InputLabel label="Time period">
-            <OptionSelect<ChartParams["timePeriod"]>
-              options={timeRangeOptions}
-              defaultValue={params?.timePeriod ?? "last7"}
-              onValueChange={updateParams("timePeriod")}
+          <InputLabel label="From">
+            <DatePicker
+              date={params?.from}
+              setDate={(date) =>
+                setParams({ ...params, from: date ?? new Date(0) })
+              }
             />
           </InputLabel>
+          <InputLabel label="To">
+            <DatePicker
+              date={params?.to}
+              setDate={(date) =>
+                setParams({ ...params, to: date ?? new Date() })
+              }
+            />
+          </InputLabel>
+
           <InputLabel label="Data interval">
-            <OptionSelect<ChartParams["dataInterval"]>
+            <OptionSelect<InsulinChartParams["dataInterval"]>
               options={intervalOptions}
               defaultValue={params?.dataInterval ?? "15"}
-              onValueChange={updateParams("dataInterval")}
+              onValueChange={(value) =>
+                setParams({ ...params, dataInterval: value })
+              }
             />
           </InputLabel>
           <InputLabel label="Bolus type">
-            <OptionSelect<ChartParams["bolusType"]>
+            <OptionSelect<InsulinChartParams["bolusType"]>
               options={bolusTypeOptions}
               defaultValue={params?.bolusType ?? "self-administered"}
-              onValueChange={updateParams("bolusType")}
+              onValueChange={(value) =>
+                setParams({ ...params, bolusType: value })
+              }
             />
           </InputLabel>
         </div>
@@ -249,7 +137,7 @@ export const InsulinChart = () => {
       <div style={{ width: "100%", height: "400px" }}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
-            data={data}
+            data={chartData}
             margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
           >
             {/* <CartesianGrid strokeDasharray="3 3" /> */}

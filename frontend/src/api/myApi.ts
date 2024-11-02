@@ -4,7 +4,7 @@
  * Pump Perfect
  * OpenAPI spec version: 0.1.0
  */
-export type GetBolusInsulinGetBolusInsulinGetParams = {
+export type GetBolusInsulinParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
@@ -12,14 +12,14 @@ step?: number;
 dose?: Dose;
 };
 
-export type GetBasalInsulinGetBasalInsulinGetParams = {
+export type GetBasalInsulinParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
 step?: number;
 };
 
-export type GetGlycemiaGetGlycemiaGetParams = {
+export type GetGlycemiaParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
@@ -38,7 +38,7 @@ export interface UploadZipResponseBody {
   file_id: string;
 }
 
-export interface Measurements {
+export interface MeasurementsResponseBody {
   max: number;
   mean: number;
   median: number;
@@ -54,7 +54,7 @@ export interface HTTPValidationError {
 }
 
 export interface GlycemiaResponseBody {
-  data: Data[];
+  data: DataResponseBody[];
 }
 
 export type Dose = typeof Dose[keyof typeof Dose];
@@ -67,21 +67,21 @@ export const Dose = {
   all: 'all',
 } as const;
 
-export interface Data {
-  measurements: Measurements;
+export interface DataResponseBody {
+  measurements: MeasurementsResponseBody;
   time: number;
 }
 
 export interface BolusInsulinResponseBody {
-  data: Data[];
+  data: DataResponseBody[];
 }
 
-export interface BodyUploadZipUploadZipPost {
+export interface BodyUploadZip {
   file: Blob;
 }
 
 export interface BasalInsulinResponseBody {
-  data: Data[];
+  data: DataResponseBody[];
 }
 
 
@@ -89,22 +89,22 @@ export interface BasalInsulinResponseBody {
 /**
  * @summary Upload Zip
  */
-export type uploadZipUploadZipPostResponse = {
+export type uploadZipResponse = {
   data: UploadZipResponseBody;
   status: number;
 }
 
-export const getUploadZipUploadZipPostUrl = () => {
+export const getUploadZipUrl = () => {
 
 
   return `http://localhost:8000/upload-zip`
 }
 
-export const uploadZipUploadZipPost = async (bodyUploadZipUploadZipPost: BodyUploadZipUploadZipPost, options?: RequestInit): Promise<uploadZipUploadZipPostResponse> => {
+export const uploadZip = async (bodyUploadZip: BodyUploadZip, options?: RequestInit): Promise<uploadZipResponse> => {
     const formData = new FormData();
-formData.append('file', bodyUploadZipUploadZipPost.file)
+formData.append('file', bodyUploadZip.file)
 
-  const res = await fetch(getUploadZipUploadZipPostUrl(),
+  const res = await fetch(getUploadZipUrl(),
   {      
     ...options,
     method: 'POST'
@@ -124,12 +124,12 @@ formData.append('file', bodyUploadZipUploadZipPost.file)
 /**
  * @summary Get Glycemia
  */
-export type getGlycemiaGetGlycemiaGetResponse = {
+export type getGlycemiaResponse = {
   data: GlycemiaResponseBody;
   status: number;
 }
 
-export const getGetGlycemiaGetGlycemiaGetUrl = (params: GetGlycemiaGetGlycemiaGetParams,) => {
+export const getGetGlycemiaUrl = (params: GetGlycemiaParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -142,9 +142,9 @@ export const getGetGlycemiaGetGlycemiaGetUrl = (params: GetGlycemiaGetGlycemiaGe
   return normalizedParams.size ? `http://localhost:8000/get-glycemia?${normalizedParams.toString()}` : `http://localhost:8000/get-glycemia`
 }
 
-export const getGlycemiaGetGlycemiaGet = async (params: GetGlycemiaGetGlycemiaGetParams, options?: RequestInit): Promise<getGlycemiaGetGlycemiaGetResponse> => {
+export const getGlycemia = async (params: GetGlycemiaParams, options?: RequestInit): Promise<getGlycemiaResponse> => {
   
-  const res = await fetch(getGetGlycemiaGetGlycemiaGetUrl(params),
+  const res = await fetch(getGetGlycemiaUrl(params),
   {      
     ...options,
     method: 'GET'
@@ -163,12 +163,12 @@ export const getGlycemiaGetGlycemiaGet = async (params: GetGlycemiaGetGlycemiaGe
 /**
  * @summary Get Basal Insulin
  */
-export type getBasalInsulinGetBasalInsulinGetResponse = {
+export type getBasalInsulinResponse = {
   data: BasalInsulinResponseBody;
   status: number;
 }
 
-export const getGetBasalInsulinGetBasalInsulinGetUrl = (params: GetBasalInsulinGetBasalInsulinGetParams,) => {
+export const getGetBasalInsulinUrl = (params: GetBasalInsulinParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -181,9 +181,9 @@ export const getGetBasalInsulinGetBasalInsulinGetUrl = (params: GetBasalInsulinG
   return normalizedParams.size ? `http://localhost:8000/get-basal-insulin?${normalizedParams.toString()}` : `http://localhost:8000/get-basal-insulin`
 }
 
-export const getBasalInsulinGetBasalInsulinGet = async (params: GetBasalInsulinGetBasalInsulinGetParams, options?: RequestInit): Promise<getBasalInsulinGetBasalInsulinGetResponse> => {
+export const getBasalInsulin = async (params: GetBasalInsulinParams, options?: RequestInit): Promise<getBasalInsulinResponse> => {
   
-  const res = await fetch(getGetBasalInsulinGetBasalInsulinGetUrl(params),
+  const res = await fetch(getGetBasalInsulinUrl(params),
   {      
     ...options,
     method: 'GET'
@@ -202,12 +202,12 @@ export const getBasalInsulinGetBasalInsulinGet = async (params: GetBasalInsulinG
 /**
  * @summary Get Bolus Insulin
  */
-export type getBolusInsulinGetBolusInsulinGetResponse = {
+export type getBolusInsulinResponse = {
   data: BolusInsulinResponseBody;
   status: number;
 }
 
-export const getGetBolusInsulinGetBolusInsulinGetUrl = (params: GetBolusInsulinGetBolusInsulinGetParams,) => {
+export const getGetBolusInsulinUrl = (params: GetBolusInsulinParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -220,9 +220,9 @@ export const getGetBolusInsulinGetBolusInsulinGetUrl = (params: GetBolusInsulinG
   return normalizedParams.size ? `http://localhost:8000/get-bolus-insulin?${normalizedParams.toString()}` : `http://localhost:8000/get-bolus-insulin`
 }
 
-export const getBolusInsulinGetBolusInsulinGet = async (params: GetBolusInsulinGetBolusInsulinGetParams, options?: RequestInit): Promise<getBolusInsulinGetBolusInsulinGetResponse> => {
+export const getBolusInsulin = async (params: GetBolusInsulinParams, options?: RequestInit): Promise<getBolusInsulinResponse> => {
   
-  const res = await fetch(getGetBolusInsulinGetBolusInsulinGetUrl(params),
+  const res = await fetch(getGetBolusInsulinUrl(params),
   {      
     ...options,
     method: 'GET'
