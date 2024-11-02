@@ -26,6 +26,17 @@ export function DatePicker({
   fromDate,
   toDate,
 }: DatePickerProps) {
+  React.useEffect(() => {
+    if (!date) return;
+
+    if (fromDate && date < fromDate) {
+      setDate(fromDate);
+    }
+    if (toDate && date > toDate) {
+      setDate(toDate);
+    }
+  }, [date, fromDate, toDate, setDate]);
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -48,6 +59,7 @@ export function DatePicker({
           fromDate={fromDate}
           toDate={toDate}
           initialFocus
+          defaultMonth={date || fromDate || new Date()}
         />
       </PopoverContent>
     </Popover>

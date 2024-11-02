@@ -28,7 +28,7 @@ export default function DocumentInfo({ fileId }: DocumentInfoProps) {
           <div className="flex flex-row items-center gap-2">
             <GrDocumentZip className="h-6 w-6" />
             {fileId !== undefined ? (
-              <p>Document Info</p>
+              <p>Manage file</p>
             ) : (
               <p>No file selected</p>
             )}
