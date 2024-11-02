@@ -10,5 +10,9 @@ FILE_ID=$(echo $RESPONSE | jq -r '.file_id')
 
 echo "File ID: $FILE_ID"
 
-curl -X POST "http://localhost:8000/insert-patient-embedding?file_id=$FILE_ID" \
+# curl -X POST "http://localhost:8000/insert-patient-embedding?file_id=$FILE_ID" \
+#   -H "accept: application/json"
+
+
+curl -X GET "http://localhost:8000/get-similar-patients?file_id=$FILE_ID" \
   -H "accept: application/json"

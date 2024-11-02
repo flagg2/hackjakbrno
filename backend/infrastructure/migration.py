@@ -6,8 +6,9 @@ def init_tables():
     with engine.connect() as conn:
         with conn.begin():
             sql = f"""
-                CREATE TABLE IF NOT EXISTS patients ( patient_id VARCHAR,
-                embedding VECTOR(DOUBLE, 288)
+                CREATE TABLE IF NOT EXISTS patients (
+                    patient VARCHAR(50),
+                    embedding VECTOR(DOUBLE, 288)
                 )
             """
             conn.execute(text(sql))

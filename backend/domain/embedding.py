@@ -2,6 +2,10 @@ from backend.domain.line_plot import line_plot_basal, line_plot_bolus, line_plot
 from backend.domain.utils import extreme_timestamps
 
 
+def scale(vector: list[float]) -> list[float]:
+    return vector
+
+
 def get_embedding(file_basal: str, file_bolus: str, file_glycemia: str) -> list[float]:
     from_timestamp, to_timestamp = extreme_timestamps(file_basal)
     basal = line_plot_basal(file_basal, from_timestamp, to_timestamp, 60)
@@ -16,4 +20,4 @@ def get_embedding(file_basal: str, file_bolus: str, file_glycemia: str) -> list[
             vector.append(datapoint.measurements.min.item())
             vector.append(datapoint.measurements.max.item())
 
-    return vector
+    return scale(vector)
