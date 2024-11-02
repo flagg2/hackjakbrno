@@ -2,35 +2,43 @@
 
 import React from "react";
 
-import { InputLabel } from "./input-label";
-import { GlycemiaResponse } from "@/api/fetch/glycemia";
-import { DatePicker } from "./ui/datepicker";
+import { InputLabel } from "../input-label";
+import { DatePicker } from "../ui/datepicker";
 
-import { OptionSelect, SelectOption } from "./option-select";
-import { InsulinChart } from "./insulin-chart";
+import { OptionSelect, SelectOption } from "../option-select";
+import { StreamChart } from "./stream-chart";
 import {
-  GlycemiaChartParams,
-  useGlycemiaState,
-} from "@/lib/queryParsers/glycemia";
+  BolusInsulinChartParams,
+  useBolusInsulinState,
+} from "@/lib/queryParsers/bolusInsulin";
+import { BolusInsulinResponse } from "@/api/fetch/bolusInsulin";
 
-type GlycemiaChartProps = {
-  response: GlycemiaResponse;
+type InsulinChartProps = {
+  response: BolusInsulinResponse;
 };
 
-export const GlycemiaChart = ({ response }: GlycemiaChartProps) => {
-  const [state, setState] = useGlycemiaState();
+export const BolusInsulinChart = ({ response }: InsulinChartProps) => {
+  const [state, setState] = useBolusInsulinState();
   const interval = parseInt(state.dataInterval);
 
-  const intervalOptions: SelectOption<GlycemiaChartParams["dataInterval"]>[] = [
+  const intervalOptions: SelectOption<
+    BolusInsulinChartParams["dataInterval"]
+  >[] = [
     { value: "30", label: "30 minutes" },
     { value: "60", label: "1 hour" },
     { value: "120", label: "2 hours" },
   ];
 
+  const bolusTypeOptions: SelectOption<BolusInsulinChartParams["type"]>[] = [
+    { value: "self", label: "Self-administered" },
+    { value: "auto", label: "Auto-administered" },
+    { value: "all", label: "All" },
+  ];
+
   return (
     <div className="">
       <div className="">
-        <h2 className="text-2xl font-bold mb-4">Glycemia Chart</h2>
+        <h2 className="text-2xl font-bold mb-4">Bolus Insulin Chart</h2>
         <div className="flex items-center gap-4  mb-4">
           <InputLabel label="From">
             <DatePicker
@@ -52,7 +60,7 @@ export const GlycemiaChart = ({ response }: GlycemiaChartProps) => {
           </InputLabel>
 
           <InputLabel label="Data interval">
-            <OptionSelect<GlycemiaChartParams["dataInterval"]>
+            <OptionSelect<BolusInsulinChartParams["dataInterval"]>
               options={intervalOptions}
               defaultValue={state?.dataInterval ?? "15"}
               onValueChange={(value) =>
@@ -60,13 +68,20 @@ export const GlycemiaChart = ({ response }: GlycemiaChartProps) => {
               }
             />
           </InputLabel>
+          <InputLabel label="Bolus type">
+            <OptionSelect<BolusInsulinChartParams["type"]>
+              options={bolusTypeOptions}
+              defaultValue={state?.type ?? "self"}
+              onValueChange={(value) => setState({ ...state, type: value })}
+            />
+          </InputLabel>
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
-        <InsulinChart
+        <StreamChart
           data={response.data}
           interval={interval}
-          yAxisLabel="Blood Glucose Level (mg/dL)"
+          yAxisLabel="Bolus Insulin Level (U)"
         />
       </div>
     </div>

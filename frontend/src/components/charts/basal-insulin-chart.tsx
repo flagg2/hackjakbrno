@@ -2,12 +2,12 @@
 
 import React from "react";
 
-import { InputLabel } from "./input-label";
+import { InputLabel } from "../input-label";
 import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
-import { DatePicker } from "./ui/datepicker";
+import { DatePicker } from "../ui/datepicker";
 
-import { OptionSelect, SelectOption } from "./option-select";
-import { InsulinChart } from "./insulin-chart";
+import { OptionSelect, SelectOption } from "../option-select";
+import { StreamChart } from "./stream-chart";
 import {
   BasalInsulinChartParams,
   useBasalInsulinState,
@@ -80,7 +80,7 @@ export const BasalInsulinChart = ({ response }: InsulinChartProps) => {
         </div>
       </div>
       <div style={{ width: "100%", height: "400px" }}>
-        <InsulinChart
+        <StreamChart
           data={response.data}
           interval={interval}
           yAxisLabel="Basal Insulin Level (U/h)"

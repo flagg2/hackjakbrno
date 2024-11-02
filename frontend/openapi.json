@@ -233,10 +233,85 @@
           }
         }
       }
+    },
+    "/get-dosage-distribution": {
+      "get": {
+        "summary": "Get Dosage Distribution",
+        "operationId": "get_dosage_distribution",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "File Id" }
+          },
+          {
+            "name": "from_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "From Datetime"
+            }
+          },
+          {
+            "name": "to_datetime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "To Datetime"
+            }
+          },
+          {
+            "name": "step_in_minutes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 60,
+              "title": "Step In Minutes"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DosageDistributionResponseBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "BarChartDataResponseBody": {
+        "properties": {
+          "time": { "type": "integer", "title": "Time" },
+          "measurements": {
+            "$ref": "#/components/schemas/DosageDistributionMeasurementsResponseBody"
+          }
+        },
+        "type": "object",
+        "required": ["time", "measurements"],
+        "title": "BarChartDataResponseBody"
+      },
       "BasalInsulinResponseBody": {
         "properties": {
           "data": {
@@ -299,6 +374,30 @@
         "type": "object",
         "required": ["time", "measurements"],
         "title": "DataResponseBody"
+      },
+      "DosageDistributionMeasurementsResponseBody": {
+        "properties": {
+          "basal": { "type": "number", "title": "Basal" },
+          "auto_bolus": { "type": "number", "title": "Auto Bolus" },
+          "self_bolus": { "type": "number", "title": "Self Bolus" }
+        },
+        "type": "object",
+        "required": ["basal", "auto_bolus", "self_bolus"],
+        "title": "DosageDistributionMeasurementsResponseBody"
+      },
+      "DosageDistributionResponseBody": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/BarChartDataResponseBody"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "DosageDistributionResponseBody"
       },
       "Dose": {
         "type": "string",

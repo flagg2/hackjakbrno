@@ -2,31 +2,25 @@
 
 import React from "react";
 import {
-  Line,
-  Area,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
   ComposedChart,
+  Bar,
 } from "recharts";
 
 import { chartColors } from "@/const/colors";
 import { ChartTooltip } from "./chart-tooltip";
-import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
-import { BolusInsulinResponse } from "@/api/fetch/bolusInsulin";
+import { InsulinDistributionResponse } from "@/api/fetch/insulin-distribution";
 
 type InsulinChartProps = {
-  data: BasalInsulinResponse["data"] | BolusInsulinResponse["data"];
+  data: InsulinDistributionResponse["data"];
   interval: number;
   yAxisLabel: string;
 };
 
-export const InsulinChart = ({
-  data,
-  interval,
-  yAxisLabel,
-}: InsulinChartProps) => {
+export const BarChart = ({ data, interval, yAxisLabel }: InsulinChartProps) => {
   const xAxisLabel = "Time (hours)";
   const augmentedData = [
     data[0],
@@ -36,16 +30,14 @@ export const InsulinChart = ({
     })),
   ];
 
-  const chartData = augmentedData.map(({ time, measurements }) => {
+  const chartData = augmentedData.map(({ time = 0, measurements }) => {
     const timeInHours = time / 60;
 
     return {
       time: timeInHours,
-      min: measurements.min,
-      max: measurements.max,
-      median: measurements.median,
-      p1090: [measurements.q10, measurements.q90] as [number, number],
-      p2575: [measurements.q25, measurements.q75] as [number, number],
+      selfBolus: measurements.self_bolus,
+      autoBolus: measurements.auto_bolus,
+      basal: measurements.basal,
     };
   });
   return (
@@ -95,52 +87,24 @@ export const InsulinChart = ({
           }}
         />
 
-        {/* P10-P90 Area (Bottom Layer) */}
-        <Area
-          type="monotone"
-          dataKey="p1090"
-          stroke="none"
-          fill={chartColors.p1090}
-          fillOpacity={0.5}
-          activeDot={false}
-          baseLine={0}
+        {/* Replace the Area and Line components with these Bar components */}
+        <Bar
+          dataKey="basal"
+          stackId="insulin"
+          fill={chartColors.basal}
+          name="Basal"
         />
-
-        {/* P25-P75 Area (Middle Layer) */}
-        <Area
-          type="monotone"
-          dataKey="p2575"
-          stroke="none"
-          fill={chartColors.p2575}
-          fillOpacity={0.7}
-          activeDot={false}
+        <Bar
+          dataKey="autoBolus"
+          stackId="insulin"
+          fill={chartColors.autoBolus}
+          name="Auto Bolus"
         />
-
-        {/* Min and Max Lines */}
-        <Line
-          type="monotone"
-          dataKey="min"
-          stroke={chartColors.minmax}
-          strokeDasharray="3 3"
-          strokeWidth={1}
-          dot={false}
-        />
-        <Line
-          type="monotone"
-          dataKey="max"
-          stroke={chartColors.minmax}
-          strokeDasharray="3 3"
-          strokeWidth={1}
-          dot={false}
-        />
-
-        {/* Median Line (Top Layer) */}
-        <Line
-          type="monotone"
-          dataKey="median"
-          stroke={chartColors.median}
-          strokeWidth={2}
-          dot={false}
+        <Bar
+          dataKey="selfBolus"
+          stackId="insulin"
+          fill={chartColors.selfBolus}
+          name="Self Bolus"
         />
       </ComposedChart>
     </ResponsiveContainer>

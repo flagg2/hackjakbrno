@@ -36,6 +36,8 @@ export function DatePicker({
     boundedDate = toDate;
   }
 
+  console.log({ boundedDate });
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -43,11 +45,11 @@ export function DatePicker({
           variant={"outline"}
           className={cn(
             "w-[240px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
+            !boundedDate && "text-muted-foreground"
           )}
         >
           <CalendarIcon />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {boundedDate ? format(boundedDate, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

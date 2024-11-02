@@ -4,12 +4,11 @@
  * Pump Perfect
  * OpenAPI spec version: 0.1.0
  */
-export type GetBolusInsulinParams = {
+export type GetDosageDistributionParams = {
 file_id: string;
 from_datetime: string;
 to_datetime: string;
 step_in_minutes?: number;
-dose?: Dose;
 };
 
 export type GetBasalInsulinParams = {
@@ -69,6 +68,24 @@ export const Dose = {
   all: 'all',
 } as const;
 
+export type GetBolusInsulinParams = {
+file_id: string;
+from_datetime: string;
+to_datetime: string;
+step_in_minutes?: number;
+dose?: Dose;
+};
+
+export interface DosageDistributionResponseBody {
+  data: BarChartDataResponseBody[];
+}
+
+export interface DosageDistributionMeasurementsResponseBody {
+  auto_bolus: number;
+  basal: number;
+  self_bolus: number;
+}
+
 export interface DataResponseBody {
   measurements: MeasurementsResponseBody;
   time: number;
@@ -88,6 +105,11 @@ export interface BasalInsulinResponseBody {
   data: DataResponseBody[];
   max_timestamp: string;
   min_timestamp: string;
+}
+
+export interface BarChartDataResponseBody {
+  measurements: DosageDistributionMeasurementsResponseBody;
+  time: number;
 }
 
 
@@ -229,6 +251,45 @@ export const getGetBolusInsulinUrl = (params: GetBolusInsulinParams,) => {
 export const getBolusInsulin = async (params: GetBolusInsulinParams, options?: RequestInit): Promise<getBolusInsulinResponse> => {
   
   const res = await fetch(getGetBolusInsulinUrl(params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+
+  )
+  const data = await res.json()
+
+  return { status: res.status, data }
+}
+
+
+
+/**
+ * @summary Get Dosage Distribution
+ */
+export type getDosageDistributionResponse = {
+  data: DosageDistributionResponseBody;
+  status: number;
+}
+
+export const getGetDosageDistributionUrl = (params: GetDosageDistributionParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  return normalizedParams.size ? `http://localhost:8000/get-dosage-distribution?${normalizedParams.toString()}` : `http://localhost:8000/get-dosage-distribution`
+}
+
+export const getDosageDistribution = async (params: GetDosageDistributionParams, options?: RequestInit): Promise<getDosageDistributionResponse> => {
+  
+  const res = await fetch(getGetDosageDistributionUrl(params),
   {      
     ...options,
     method: 'GET'
