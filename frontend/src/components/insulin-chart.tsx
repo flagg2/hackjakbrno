@@ -10,80 +10,51 @@ import {
   ResponsiveContainer,
   ComposedChart,
 } from "recharts";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+
 import { InputLabel } from "./input-label";
-import { useQueryState } from "nuqs";
 import { chartColors } from "@/const/colors";
 import { ChartTooltip } from "./chart-tooltip";
 import { BasalInsulinResponse } from "@/api/fetch/basalInsulin";
 import { DatePicker } from "./ui/datepicker";
 import {
   InsulinChartParams,
-  insulinChartParamsSchema,
-  insulinParsers,
+  useInsulinState,
 } from "@/lib/queryParsers/insulin";
-
-type SelectOption<T extends string> = {
-  value: T;
-  label: string;
-};
-
-interface OptionSelectProps<T extends string> {
-  options: SelectOption<T>[];
-  defaultValue: T;
-  onValueChange: (value: T) => void;
-}
-
-const OptionSelect = <T extends string>({
-  options,
-  defaultValue,
-  onValueChange,
-}: OptionSelectProps<T>) => (
-  <Select defaultValue={defaultValue} onValueChange={onValueChange}>
-    <SelectTrigger className="w-[180px] mt-1">
-      <SelectValue
-        placeholder={options.find((opt) => opt.value === defaultValue)?.label}
-      />
-    </SelectTrigger>
-    <SelectContent>
-      {options.map((option) => (
-        <SelectItem key={option.value} value={option.value}>
-          {option.label}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-);
+import { OptionSelect, SelectOption } from "./option-select";
 
 type InsulinChartProps = {
   response: BasalInsulinResponse;
 };
 
 export const InsulinChart = ({ response }: InsulinChartProps) => {
-  const [params, setParams] = useQueryState(
-    "chartParams",
-    insulinParsers.insulin
-  );
+  const [state, setState] = useInsulinState();
+  const interval = parseInt(state.dataInterval);
 
-  const chartData = response.data.map(({ time, measurements }) => ({
-    time,
-    min: measurements.min,
-    max: measurements.max,
-    median: measurements.median,
-    p1090: [measurements.q10, measurements.q90] as [number, number],
-    p2575: [measurements.q25, measurements.q75] as [number, number],
-  }));
+  const data = [
+    response.data[0],
+    ...response.data.map((d) => ({
+      ...d,
+      time: d.time + interval,
+    })),
+  ];
+
+  const chartData = data.map(({ time, measurements }) => {
+    const timeInHours = time / 60;
+
+    return {
+      time: timeInHours,
+      min: measurements.min,
+      max: measurements.max,
+      median: measurements.median,
+      p1090: [measurements.q10, measurements.q90] as [number, number],
+      p2575: [measurements.q25, measurements.q75] as [number, number],
+    };
+  });
 
   const intervalOptions: SelectOption<InsulinChartParams["dataInterval"]>[] = [
-    { value: "15", label: "15 minutes" },
     { value: "30", label: "30 minutes" },
     { value: "60", label: "1 hour" },
+    { value: "120", label: "2 hours" },
   ];
 
   const bolusTypeOptions: SelectOption<InsulinChartParams["bolusType"]>[] = [
@@ -95,41 +66,42 @@ export const InsulinChart = ({ response }: InsulinChartProps) => {
   return (
     <div className="">
       <div className="">
-        <h2 className="text-2xl font-bold mb-4">Glucose Chart</h2>
+        <h2 className="text-2xl font-bold mb-4">Insulin Chart</h2>
         <div className="flex items-center gap-4  mb-4">
           <InputLabel label="From">
             <DatePicker
-              date={params?.from}
-              //   fromDate={response.min_timestamp}
+              date={state?.from}
+              fromDate={new Date(response.min_timestamp)}
+              toDate={new Date(response.max_timestamp)}
               setDate={(date) =>
-                setParams({ ...params, from: date ?? new Date(0) })
+                setState({ ...state, from: date ?? new Date(0) })
               }
             />
           </InputLabel>
           <InputLabel label="To">
             <DatePicker
-              date={params?.to}
-              setDate={(date) =>
-                setParams({ ...params, to: date ?? new Date() })
-              }
+              date={state?.to}
+              fromDate={new Date(response.min_timestamp)}
+              toDate={new Date(response.max_timestamp)}
+              setDate={(date) => setState({ ...state, to: date ?? new Date() })}
             />
           </InputLabel>
 
           <InputLabel label="Data interval">
             <OptionSelect<InsulinChartParams["dataInterval"]>
               options={intervalOptions}
-              defaultValue={params?.dataInterval ?? "15"}
+              defaultValue={state?.dataInterval ?? "15"}
               onValueChange={(value) =>
-                setParams({ ...params, dataInterval: value })
+                setState({ ...state, dataInterval: value })
               }
             />
           </InputLabel>
           <InputLabel label="Bolus type">
             <OptionSelect<InsulinChartParams["bolusType"]>
               options={bolusTypeOptions}
-              defaultValue={params?.bolusType ?? "self-administered"}
+              defaultValue={state?.bolusType ?? "self-administered"}
               onValueChange={(value) =>
-                setParams({ ...params, bolusType: value })
+                setState({ ...state, bolusType: value })
               }
             />
           </InputLabel>
@@ -149,15 +121,38 @@ export const InsulinChart = ({ response }: InsulinChartProps) => {
                 position: "insideBottom",
                 offset: -5,
               }}
+              domain={[0, 24]}
+              ticks={Array.from({ length: 25 }, (_, i) => i)}
+              type="number"
+              allowDataOverflow={true}
+              tickFormatter={(value) => {
+                const hours = Math.floor(value);
+                const minutes = Math.round((value % 1) * 60);
+                return minutes === 0
+                  ? `${hours}h`
+                  : `${hours}:${minutes.toString().padStart(2, "0")}`;
+              }}
             />
             <YAxis
               label={{
-                value: "Glucose Level (mmol/L)",
+                value: "Insulin Level (U/h)",
                 angle: -90,
                 position: "insideLeft",
               }}
             />
-            <Tooltip content={<ChartTooltip />} />
+            <Tooltip
+              content={(props) => {
+                const time = props.payload?.[0]?.payload?.time;
+                if (time === undefined) return null;
+                return (
+                  <ChartTooltip
+                    {...props}
+                    timeMinutes={time * 60}
+                    timeIntervalMinutes={interval}
+                  />
+                );
+              }}
+            />
 
             {/* P10-P90 Area (Bottom Layer) */}
             <Area

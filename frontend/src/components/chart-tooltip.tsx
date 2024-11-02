@@ -1,15 +1,16 @@
 import { chartColors } from "@/const/colors";
 
 type TooltipPayloadItem = {
-  value: unknown;
-  dataKey: string;
-  color: string;
+  value?: unknown;
+  dataKey?: string | number;
+  color?: string;
 };
 
 type CustomTooltipProps = {
   active?: boolean;
   payload?: TooltipPayloadItem[];
-  label?: string;
+  timeMinutes: number;
+  timeIntervalMinutes: number;
 };
 
 type StatisticLineProps = {
@@ -32,22 +33,38 @@ const StatisticLine = ({ color, label, value }: StatisticLineProps) => (
   </p>
 );
 
+function formatTime(minutes: number) {
+  let hours = Math.floor(minutes / 60);
+  let remainingMinutes = minutes % 60;
+  if (remainingMinutes === 0) {
+    return `${hours}h`;
+  }
+  return `${hours}h ${remainingMinutes}min`;
+}
+
 export const ChartTooltip = ({
   active,
   payload,
-  label,
+  timeMinutes,
+  timeIntervalMinutes,
 }: CustomTooltipProps) => {
   if (!active || !payload) return null;
+
+  console.log("Tooltip payload:", timeMinutes * 60, timeIntervalMinutes);
 
   // Find the p2575 and p1090 arrays
   const p2575Array = payload.find((p) => p.dataKey === "p2575")
     ?.value as number[];
   const p1090Array = payload.find((p) => p.dataKey === "p1090")
     ?.value as number[];
+  const timeLabelStart = formatTime(timeMinutes - timeIntervalMinutes);
+  const timeLabelEnd = formatTime(timeMinutes);
 
   return (
     <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">
-      <p className="font-medium">{`Time: ${label}h`}</p>
+      <p className="font-medium">
+        Time: {timeLabelStart} - {timeLabelEnd}
+      </p>
       <StatisticLine
         color={chartColors.median}
         label="Median"
