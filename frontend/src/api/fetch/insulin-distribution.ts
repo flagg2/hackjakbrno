@@ -20,9 +20,6 @@ export async function fetchInsulinDistribution(
   });
 
   return {
-    data: data.data.map((d) => ({
-      ...d,
-      time: d.time * 60,
-    })),
+    data,
   };
 }
