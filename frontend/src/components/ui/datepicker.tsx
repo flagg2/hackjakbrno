@@ -21,21 +21,20 @@ interface DatePickerProps {
 }
 
 export function DatePicker({
-  date,
+  date = new Date(),
   setDate,
   fromDate,
   toDate,
 }: DatePickerProps) {
-  React.useEffect(() => {
-    if (!date) return;
+  let boundedDate = date;
 
-    if (fromDate && date < fromDate) {
-      setDate(fromDate);
-    }
-    if (toDate && date > toDate) {
-      setDate(toDate);
-    }
-  }, [date, fromDate, toDate, setDate]);
+  if (fromDate && date < fromDate) {
+    boundedDate = fromDate;
+  }
+
+  if (toDate && date && date > toDate) {
+    boundedDate = toDate;
+  }
 
   return (
     <Popover>
@@ -54,12 +53,12 @@ export function DatePicker({
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
+          selected={boundedDate}
           onSelect={(date) => setDate(date)}
           fromDate={fromDate}
           toDate={toDate}
           initialFocus
-          defaultMonth={date || fromDate || new Date()}
+          defaultMonth={boundedDate || fromDate || new Date()}
         />
       </PopoverContent>
     </Popover>
