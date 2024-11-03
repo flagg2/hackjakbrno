@@ -5,55 +5,55 @@
  * OpenAPI spec version: 0.1.0
  */
 export type GetSimilarPatientsParams = {
-file_id: string;
+  file_id: string;
 };
 
 export type InsertPatientEmbeddingParams = {
-file_id: string;
+  file_id: string;
 };
 
 export type GetHypoglycemiaDistributionParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
+  file_id: string;
+  from_datetime: string;
+  to_datetime: string;
+  step_in_minutes?: number;
 };
 
 export type GetHighestBolusDosageDistributionParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
-quantile?: number;
+  file_id: string;
+  from_datetime: string;
+  to_datetime: string;
+  step_in_minutes?: number;
+  quantile?: number;
 };
 
 export type GetDosageDistributionParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
+  file_id: string;
+  from_datetime: string;
+  to_datetime: string;
+  step_in_minutes?: number;
 };
 
 export type GetBolusInsulinParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
-dose?: Dose;
+  file_id: string;
+  from_datetime: string;
+  to_datetime: string;
+  step_in_minutes?: number;
+  dose?: Dose;
 };
 
 export type GetBasalInsulinParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
+  file_id: string;
+  from_datetime: string;
+  to_datetime: string;
+  step_in_minutes?: number;
 };
 
 export type GetGlycemiaParams = {
-file_id: string;
-from_datetime: string;
-to_datetime: string;
-step_in_minutes?: number;
+  file_id: string;
+  from_datetime: string;
+  to_datetime: string;
+  step_in_minutes?: number;
 };
 
 export type ValidationErrorLocItem = string | number;
@@ -133,15 +133,14 @@ export interface GetSimilarPatientsResponseBody {
   patients: string[];
 }
 
-export type Dose = typeof Dose[keyof typeof Dose];
-
+export type Dose = (typeof Dose)[keyof typeof Dose];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Dose = {
-  auto: 'auto',
-  self: 'self',
-  carbs: 'carbs',
-  all: 'all',
+  auto: "auto",
+  self: "self",
+  carbs: "carbs",
+  all: "all",
 } as const;
 
 export interface DosageDistributionResponseBody {
@@ -182,42 +181,34 @@ export interface BarChartDataResponseBody {
   time: number;
 }
 
-
-
 /**
  * @summary Upload Zip
  */
 export type uploadZipResponse = {
   data: UploadZipResponseBody;
   status: number;
-}
+};
 
 export const getUploadZipUrl = () => {
+  return `http://backend:8000/upload-zip`;
+};
 
+export const uploadZip = async (
+  bodyUploadZip: BodyUploadZip,
+  options?: RequestInit
+): Promise<uploadZipResponse> => {
+  const formData = new FormData();
+  formData.append("file", bodyUploadZip.file);
 
-  return `http://localhost:8000/upload-zip`
-}
-
-export const uploadZip = async (bodyUploadZip: BodyUploadZip, options?: RequestInit): Promise<uploadZipResponse> => {
-    const formData = new FormData();
-formData.append('file', bodyUploadZip.file)
-
-  const res = await fetch(getUploadZipUrl(),
-  {      
+  const res = await fetch(getUploadZipUrl(), {
     ...options,
-    method: 'POST'
-    ,
-    body: 
-      formData,
-  }
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Get Glycemia
@@ -225,38 +216,34 @@ formData.append('file', bodyUploadZip.file)
 export type getGlycemiaResponse = {
   data: GlycemiaResponseBody;
   status: number;
-}
+};
 
-export const getGetGlycemiaUrl = (params: GetGlycemiaParams,) => {
+export const getGetGlycemiaUrl = (params: GetGlycemiaParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-glycemia?${normalizedParams.toString()}` : `http://localhost:8000/get-glycemia`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-glycemia?${normalizedParams.toString()}`
+    : `http://backend:8000/get-glycemia`;
+};
 
-export const getGlycemia = async (params: GetGlycemiaParams, options?: RequestInit): Promise<getGlycemiaResponse> => {
-  
-  const res = await fetch(getGetGlycemiaUrl(params),
-  {      
+export const getGlycemia = async (
+  params: GetGlycemiaParams,
+  options?: RequestInit
+): Promise<getGlycemiaResponse> => {
+  const res = await fetch(getGetGlycemiaUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Get Basal Insulin
@@ -264,38 +251,34 @@ export const getGlycemia = async (params: GetGlycemiaParams, options?: RequestIn
 export type getBasalInsulinResponse = {
   data: BasalInsulinResponseBody;
   status: number;
-}
+};
 
-export const getGetBasalInsulinUrl = (params: GetBasalInsulinParams,) => {
+export const getGetBasalInsulinUrl = (params: GetBasalInsulinParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-basal-insulin?${normalizedParams.toString()}` : `http://localhost:8000/get-basal-insulin`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-basal-insulin?${normalizedParams.toString()}`
+    : `http://backend:8000/get-basal-insulin`;
+};
 
-export const getBasalInsulin = async (params: GetBasalInsulinParams, options?: RequestInit): Promise<getBasalInsulinResponse> => {
-  
-  const res = await fetch(getGetBasalInsulinUrl(params),
-  {      
+export const getBasalInsulin = async (
+  params: GetBasalInsulinParams,
+  options?: RequestInit
+): Promise<getBasalInsulinResponse> => {
+  const res = await fetch(getGetBasalInsulinUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Get Bolus Insulin
@@ -303,38 +286,34 @@ export const getBasalInsulin = async (params: GetBasalInsulinParams, options?: R
 export type getBolusInsulinResponse = {
   data: BolusInsulinResponseBody;
   status: number;
-}
+};
 
-export const getGetBolusInsulinUrl = (params: GetBolusInsulinParams,) => {
+export const getGetBolusInsulinUrl = (params: GetBolusInsulinParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-bolus-insulin?${normalizedParams.toString()}` : `http://localhost:8000/get-bolus-insulin`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-bolus-insulin?${normalizedParams.toString()}`
+    : `http://backend:8000/get-bolus-insulin`;
+};
 
-export const getBolusInsulin = async (params: GetBolusInsulinParams, options?: RequestInit): Promise<getBolusInsulinResponse> => {
-  
-  const res = await fetch(getGetBolusInsulinUrl(params),
-  {      
+export const getBolusInsulin = async (
+  params: GetBolusInsulinParams,
+  options?: RequestInit
+): Promise<getBolusInsulinResponse> => {
+  const res = await fetch(getGetBolusInsulinUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Get Dosage Distribution
@@ -342,38 +321,36 @@ export const getBolusInsulin = async (params: GetBolusInsulinParams, options?: R
 export type getDosageDistributionResponse = {
   data: DosageDistributionResponseBody;
   status: number;
-}
+};
 
-export const getGetDosageDistributionUrl = (params: GetDosageDistributionParams,) => {
+export const getGetDosageDistributionUrl = (
+  params: GetDosageDistributionParams
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-dosage-distribution?${normalizedParams.toString()}` : `http://localhost:8000/get-dosage-distribution`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-dosage-distribution?${normalizedParams.toString()}`
+    : `http://backend:8000/get-dosage-distribution`;
+};
 
-export const getDosageDistribution = async (params: GetDosageDistributionParams, options?: RequestInit): Promise<getDosageDistributionResponse> => {
-  
-  const res = await fetch(getGetDosageDistributionUrl(params),
-  {      
+export const getDosageDistribution = async (
+  params: GetDosageDistributionParams,
+  options?: RequestInit
+): Promise<getDosageDistributionResponse> => {
+  const res = await fetch(getGetDosageDistributionUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Get Highest Bolus Dosage Distribution
@@ -381,38 +358,36 @@ export const getDosageDistribution = async (params: GetDosageDistributionParams,
 export type getHighestBolusDosageDistributionResponse = {
   data: HighestBolusDosageDistributionResponseBody;
   status: number;
-}
+};
 
-export const getGetHighestBolusDosageDistributionUrl = (params: GetHighestBolusDosageDistributionParams,) => {
+export const getGetHighestBolusDosageDistributionUrl = (
+  params: GetHighestBolusDosageDistributionParams
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-highest-bolus-dosage-distribution?${normalizedParams.toString()}` : `http://localhost:8000/get-highest-bolus-dosage-distribution`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-highest-bolus-dosage-distribution?${normalizedParams.toString()}`
+    : `http://backend:8000/get-highest-bolus-dosage-distribution`;
+};
 
-export const getHighestBolusDosageDistribution = async (params: GetHighestBolusDosageDistributionParams, options?: RequestInit): Promise<getHighestBolusDosageDistributionResponse> => {
-  
-  const res = await fetch(getGetHighestBolusDosageDistributionUrl(params),
-  {      
+export const getHighestBolusDosageDistribution = async (
+  params: GetHighestBolusDosageDistributionParams,
+  options?: RequestInit
+): Promise<getHighestBolusDosageDistributionResponse> => {
+  const res = await fetch(getGetHighestBolusDosageDistributionUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Get Hypoglycemia Distribution
@@ -420,38 +395,36 @@ export const getHighestBolusDosageDistribution = async (params: GetHighestBolusD
 export type getHypoglycemiaDistributionResponse = {
   data: HypoglycemiaDistributionResponseBody;
   status: number;
-}
+};
 
-export const getGetHypoglycemiaDistributionUrl = (params: GetHypoglycemiaDistributionParams,) => {
+export const getGetHypoglycemiaDistributionUrl = (
+  params: GetHypoglycemiaDistributionParams
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-hypoglycemia-distribution?${normalizedParams.toString()}` : `http://localhost:8000/get-hypoglycemia-distribution`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-hypoglycemia-distribution?${normalizedParams.toString()}`
+    : `http://backend:8000/get-hypoglycemia-distribution`;
+};
 
-export const getHypoglycemiaDistribution = async (params: GetHypoglycemiaDistributionParams, options?: RequestInit): Promise<getHypoglycemiaDistributionResponse> => {
-  
-  const res = await fetch(getGetHypoglycemiaDistributionUrl(params),
-  {      
+export const getHypoglycemiaDistribution = async (
+  params: GetHypoglycemiaDistributionParams,
+  options?: RequestInit
+): Promise<getHypoglycemiaDistributionResponse> => {
+  const res = await fetch(getGetHypoglycemiaDistributionUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Insert Patient Embedding
@@ -459,38 +432,36 @@ export const getHypoglycemiaDistribution = async (params: GetHypoglycemiaDistrib
 export type insertPatientEmbeddingResponse = {
   data: InsertPatientEmbeddingResponseBody;
   status: number;
-}
+};
 
-export const getInsertPatientEmbeddingUrl = (params: InsertPatientEmbeddingParams,) => {
+export const getInsertPatientEmbeddingUrl = (
+  params: InsertPatientEmbeddingParams
+) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/insert-patient-embedding?${normalizedParams.toString()}` : `http://localhost:8000/insert-patient-embedding`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/insert-patient-embedding?${normalizedParams.toString()}`
+    : `http://backend:8000/insert-patient-embedding`;
+};
 
-export const insertPatientEmbedding = async (params: InsertPatientEmbeddingParams, options?: RequestInit): Promise<insertPatientEmbeddingResponse> => {
-  
-  const res = await fetch(getInsertPatientEmbeddingUrl(params),
-  {      
+export const insertPatientEmbedding = async (
+  params: InsertPatientEmbeddingParams,
+  options?: RequestInit
+): Promise<insertPatientEmbeddingResponse> => {
+  const res = await fetch(getInsertPatientEmbeddingUrl(params), {
     ...options,
-    method: 'POST'
-    
-    
-  }
+    method: "POST",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
+  return { status: res.status, data };
+};
 
 /**
  * @summary Insert Patient Embedding
@@ -498,36 +469,31 @@ export const insertPatientEmbedding = async (params: InsertPatientEmbeddingParam
 export type getSimilarPatientsResponse = {
   data: GetSimilarPatientsResponseBody;
   status: number;
-}
+};
 
-export const getGetSimilarPatientsUrl = (params: GetSimilarPatientsParams,) => {
+export const getGetSimilarPatientsUrl = (params: GetSimilarPatientsParams) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
-    
     if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
+      normalizedParams.append(key, value === null ? "null" : value.toString());
     }
   });
 
-  return normalizedParams.size ? `http://localhost:8000/get-similar-patients?${normalizedParams.toString()}` : `http://localhost:8000/get-similar-patients`
-}
+  return normalizedParams.size
+    ? `http://backend:8000/get-similar-patients?${normalizedParams.toString()}`
+    : `http://backend:8000/get-similar-patients`;
+};
 
-export const getSimilarPatients = async (params: GetSimilarPatientsParams, options?: RequestInit): Promise<getSimilarPatientsResponse> => {
-  
-  const res = await fetch(getGetSimilarPatientsUrl(params),
-  {      
+export const getSimilarPatients = async (
+  params: GetSimilarPatientsParams,
+  options?: RequestInit
+): Promise<getSimilarPatientsResponse> => {
+  const res = await fetch(getGetSimilarPatientsUrl(params), {
     ...options,
-    method: 'GET'
-    
-    
-  }
+    method: "GET",
+  });
+  const data = await res.json();
 
-  )
-  const data = await res.json()
-
-  return { status: res.status, data }
-}
-
-
-
+  return { status: res.status, data };
+};

@@ -84,7 +84,7 @@ export const InsulinDistributionChart = ({
             <DistributionTooltip
               {...props}
               timeIntervalMinutes={interval}
-              timeMinutes={props.payload?.[0]?.payload?.time * 60 ?? 0}
+              timeMinutes={props.payload?.[0]?.payload?.time * 60}
             />
           )}
           yAxisLabel="Bolus Insulin Level (U)"

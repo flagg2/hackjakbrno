@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export async function uploadFileAction({ formData }: { formData: FormData }) {
   try {
-    const response = await fetch("http://localhost:8000/upload-zip", {
+    const response = await fetch("http://backend:8000/upload-zip", {
       method: "POST",
       body: formData,
     });

@@ -4,7 +4,7 @@ module.exports = {
     output: {
       target: "./src/api/myApi.ts",
       client: "fetch",
-      baseUrl: "http://localhost:8000",
+      baseUrl: "http://backend:8000",
     },
     input: "./openapi.json",
   },

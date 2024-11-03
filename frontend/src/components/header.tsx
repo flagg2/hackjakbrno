@@ -15,7 +15,7 @@ export default function Header({ fileId }: HeaderProps) {
             <Link href="/" className="flex items-center">
               <GiHealthNormal className="h-6 w-6 text-primary" />
               <div className="ml-2 text-xl font-bold text-foreground">
-                Perfect Pump
+                Pump Perfect
               </div>
             </Link>
           </div>

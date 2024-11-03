@@ -1,12 +1,12 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  web:
+  backend:
     build:
       context: .
     command: /app/entrypoint.sh
     volumes:
-      - ./backend:/app/backend  # Only mount the source codes:
+      - ./backend:/app/backend # Only mount the source codes:
     ports:
       - "8000:8000"
     networks:
@@ -24,6 +24,13 @@ services:
     networks:
       - app-network
 
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
 
 networks:
   app-network:
